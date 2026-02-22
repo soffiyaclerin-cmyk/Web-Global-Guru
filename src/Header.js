@@ -22,7 +22,11 @@ const Header = ({ onProfileClick, t, currentView }) => {
   return (
     <nav style={{
       ...styles.header,
-      padding: isMobile ? '0 15px' : '0 40px'
+      // கேமரா பகுதிக்கு (Notch) கீழே வர paddingTop-ஐ மாற்றி அமைத்துள்ளோம்
+      paddingTop: 'calc(env(safe-area-inset-top) + 15px)', 
+      paddingBottom: '15px',
+      paddingLeft: isMobile ? '15px' : '40px',
+      paddingRight: isMobile ? '15px' : '40px',
     }}>
       {/* 1. Logo Area */}
       <div style={styles.logoArea}>
@@ -32,12 +36,12 @@ const Header = ({ onProfileClick, t, currentView }) => {
         {!isMobile && (
           <div style={styles.textContainer}>
             <h1 style={styles.brandTitle}>Web Global <span style={{color: deepBlush}}>Guru</span></h1>
-            {!isMobile && windowWidth > 800 && <p style={styles.tagline}>{t.brandTagline}</p>}
+            {!isMobile && windowWidth > 800 && <p style={styles.tagline}>{t?.brandTagline}</p>}
           </div>
         )}
       </div>
 
-      {/* 2. Search Box Area - இது திரைக்கு ஏற்ப அகலம் மாறும் */}
+      {/* 2. Search Box Area */}
       <div style={{
         ...styles.searchWrapper,
         margin: isMobile ? '0 10px' : '0 20px'
@@ -86,9 +90,10 @@ const Header = ({ onProfileClick, t, currentView }) => {
 
 const styles = {
   header: {
-    height: '75px', 
+    minHeight: '110px', 
     display: 'flex', 
-    alignItems: 'center', 
+    alignItems: 'flex-end', /* center-க்கு பதிலாக flex-end என மாற்றப்பட்டுள்ளது. இது பொருட்களை கீழே கொண்டுவரும் */
+    paddingBottom: '20px',  /* கீழ்ப்புற பார்டரில் ஒட்டாமல் இருக்க 15px இடைவெளி */
     justifyContent: 'space-between',
     position: 'sticky', 
     top: 0, 
@@ -103,7 +108,7 @@ const styles = {
     display: 'flex', 
     alignItems: 'center', 
     gap: '10px',
-    flexShrink: 0 // மொபைலில் லோகோ சுருங்காமல் இருக்க
+    flexShrink: 0 
   },
   logoBg: { 
     background: '#fff', 
@@ -136,8 +141,8 @@ const styles = {
     flex: 1, 
     display: 'flex', 
     justifyContent: 'center', 
-    maxWidth: '520px', // அதிகபட்ச அகலம்
-    minWidth: '50px'   // மிகச்சிறிய அகலம்
+    maxWidth: '520px', 
+    minWidth: '50px'   
   },
   searchContainer: { 
     width: '100%', 
