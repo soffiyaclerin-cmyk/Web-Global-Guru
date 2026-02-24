@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { Gamepad2, LayoutGrid, Tag, Store } from 'lucide-react';
+import { Gamepad2, LayoutGrid, User, Store } from 'lucide-react'; // Changed Tag to User
 import { motion } from 'framer-motion';
 
 const Footer = () => {
   const [activeTab, setActiveTab] = useState('store');
 
   const deepBlush = '#DD7A83';
-  const lightBlush = '#E3BFC3';
+  // const lightBlush = '#E3BFC3'; // Unused variable removed for cleanliness
   const textDark = '#4A1D1F';
 
   const tabs = [
     { id: 'games', label: 'Games', icon: <Gamepad2 size={20} /> },
     { id: 'store', label: 'Store', icon: <Store size={20} /> },
     { id: 'apps', label: 'Apps', icon: <LayoutGrid size={20} /> },
-    { id: 'offers', label: 'Offers', icon: <Tag size={20} /> },
+    // Replaced 'Offers' with 'You'
+    { id: 'you', label: 'You', icon: <User size={20} /> }, 
   ];
 
   return (
@@ -26,12 +27,12 @@ const Footer = () => {
               key={tab.id} 
               style={styles.tabItem} 
               onClick={() => setActiveTab(tab.id)}
-              whileTap={{ scale: 0.9 }} // கிளிக் செய்யும் போது சிறிய அனிமேஷன்
+              whileTap={{ scale: 0.9 }} 
             >
-              {/* Pill Shape Highlight (Google Play Style) */}
+              {/* Pill Shape Highlight */}
               <div style={{
                 ...styles.iconContainer,
-                backgroundColor: isActive ? `${deepBlush}22` : 'transparent', // 22 adds subtle transparency
+                backgroundColor: isActive ? `${deepBlush}22` : 'transparent', 
                 color: isActive ? deepBlush : '#7D5A5C',
               }}>
                 {React.cloneElement(tab.icon, { strokeWidth: isActive ? 2.5 : 2 })}
@@ -64,7 +65,7 @@ const Footer = () => {
 const styles = {
   footerContainer: {
     position: 'fixed',
-    bottom: '15px', // லேசாக மேலே தூக்கி இருப்பது போல் (Floating look)
+    bottom: '15px', 
     left: '50%',
     transform: 'translateX(-50%)',
     width: '90%',

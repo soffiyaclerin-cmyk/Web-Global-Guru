@@ -15,17 +15,27 @@ import {
   CheckCircle, X, Copy as CopyIcon, RefreshCw, Package, File, Shield as ShieldIcon,
   Play, Pause, Edit, Trash, MoreVertical, Menu, LogOut, UserCheck, UserPlus, DollarCircle,
   PieChart as PieChartIcon, BarChart as BarChartIcon, ArrowUpRight, ArrowDownRight,
-  Clock3, Calendar, MapPin, Phone, AtSign, ShieldAlert
+  Clock3, Calendar, MapPin, Phone, AtSign, ShieldAlert, Grid, Compass, Award, Smartphone as MobileIcon, Layers,
+  Headphones, ShoppingBag, Music, Gamepad2
 } from 'lucide-react';
-
 
 function App() {
   const [view, setView] = useState('home'); 
   const [selectedRole, setSelectedRole] = useState(null); 
   const [activeModule, setActiveModule] = useState(null); 
 
+  // --- NEW: Home Navigation State ---
+  const [activeTab, setActiveTab] = useState('For You');
+  
+  // --- NEW: Carousel State ---
+  const [currentBanner, setCurrentBanner] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
   const deepBlush = '#DD7A83';
   const lightBlush = '#E3BFC3';
+  const darkBrown = '#4A1D1F';
+  const textBrown = '#4A1D1F';
+  const mutedText = '#7D5A5C';
 
   // Navigation logic
   const goBack = () => {
@@ -35,6 +45,52 @@ function App() {
   };
 
   useEffect(() => { window.scrollTo(0, 0); }, [selectedRole, activeModule]);
+
+  // --- Banner Data (8 Items) ---
+  const banners = [
+    { id: 1, title: "Global Dev Tools", desc: "Deploy React apps in seconds with our new cloud engine.", btn: "Start Building", color: "#4A1D1F", icon: <Terminal size={40} /> },
+    { id: 2, title: "Analytics Pro", desc: "Track every visitor with real-time heatmaps.", btn: "View Charts", color: "#DD7A83", icon: <BarChart3 size={40} /> },
+    { id: 3, title: "Secure Guard", desc: "Enterprise-grade SSL & Firewall protection included.", btn: "Secure Now", color: "#2E3B55", icon: <ShieldCheck size={40} /> },
+    { id: 4, title: "SEO Masterclass", desc: "Rank #1 on search engines with our AI keywords.", btn: "Learn SEO", color: "#D97706", icon: <TrendingUp size={40} /> },
+    { id: 5, title: "Client Portal", desc: "Manage billing and invoices in one seamless dashboard.", btn: "Manage", color: "#059669", icon: <Users size={40} /> },
+    { id: 6, title: "Cloud Storage", desc: "50GB Free storage for all new developer accounts.", btn: "Claim Offer", color: "#2563EB", icon: <CloudLightning size={40} /> },
+    { id: 7, title: "Domain Hunter", desc: "Find the perfect premium domain for your brand.", btn: "Search", color: "#7C3AED", icon: <Globe size={40} /> },
+    { id: 8, title: "24/7 Support", desc: "Our expert engineers are here to help you debug.", btn: "Chat Now", color: "#DB2777", icon: <MessageSquare size={40} /> },
+  ];
+
+  // --- Carousel Timer Logic ---
+  useEffect(() => {
+    if (view !== 'home' || isPaused) return;
+    const timer = setInterval(() => {
+      setCurrentBanner((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [view, isPaused, banners.length]);
+
+  const navTabs = [
+    { name: "For You", icon: <Compass size={14} /> },
+    { name: "Top Charts", icon: <BarChart2 size={14} /> },
+    { name: "Categories", icon: <Grid size={14} /> },
+    { name: "Editor's Choice", icon: <Award size={14} /> },
+    { name: "New Apps", icon: <PlusCircle size={14} /> },
+    { name: "Trending", icon: <TrendingUp size={14} /> },
+  ];
+
+  // --- Popular Apps Data ---
+  const popularApps = [
+    { id: 1, name: "Social", color: "#E1306C", icon: <Camera size={22}/> },
+    { id: 2, name: "Music", color: "#1DB954", icon: <Headphones size={22}/> },
+    { id: 3, name: "Chat", color: "#25D366", icon: <MessageCircle size={22}/> },
+    { id: 4, name: "Video", color: "#FF0000", icon: <Play size={22}/> },
+    { id: 5, name: "Cloud", color: "#4285F4", icon: <CloudLightning size={22}/> },
+    { id: 6, name: "Wallet", color: "#662D91", icon: <Wallet size={22}/> },
+    { id: 7, name: "Maps", color: "#34A853", icon: <MapPin size={22}/> },
+    { id: 8, name: "News", color: "#F4B400", icon: <Globe size={22}/> },
+    { id: 9, name: "Docs", color: "#4A90E2", icon: <FileText size={22}/> },
+    { id: 10, name: "Bank", color: "#0F9D58", icon: <Landmark size={22}/> },
+    { id: 11, name: "Games", color: "#FF4500", icon: <Gamepad2 size={22}/> },
+    { id: 12, name: "Shop", color: "#FF9900", icon: <ShoppingBag size={22}/> },
+  ];
 
   // --- 1. FULL ROLE DATA STRUCTURE ---
   const roleData = {
@@ -99,22 +155,138 @@ function App() {
   };
 
   return (
-  // <-- இது return() க்குள்ளே இருக்க வேண்டும் என்பதை உறுதி செய்து கொள்ளுங்கள்
     <div style={styles.appWrapper}>
       <Header t={{brandTagline: "SILK WEB SYSTEMS"}} onProfileClick={() => setView('settings')} currentView={view} />
       <div style={styles.mainBody}>
         <div style={styles.mainContainer}>
           <AnimatePresence mode="wait">
             {view === 'home' && (
-              <motion.main key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={styles.homeView}>
-                 <div style={styles.heroLogoWrapper}>
-                   <img src={Mainlogo} alt="Logo" style={styles.heroMainLogo} />
+              <motion.main 
+                key="home" 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                style={styles.homeView}
+              >
+                 {/* --- Top Navigation Tabs --- */}
+                 <div style={styles.navScrollContainer}>
+                   {navTabs.map((tab) => (
+                     <button 
+                       key={tab.name}
+                       style={activeTab === tab.name ? styles.navTabActive : styles.navTab}
+                       onClick={() => setActiveTab(tab.name)}
+                     >
+                       {tab.icon}
+                       {tab.name}
+                     </button>
+                   ))}
                  </div>
-                 <h1 style={styles.heroTitle}>Smart Web <span style={{color: deepBlush}}>Gateway</span></h1>
-                 <p style={styles.heroSub}>Choose your access level to manage your web infrastructure.</p>
-                 <button style={{...styles.mainBtn, background: `linear-gradient(135deg, ${deepBlush}, ${lightBlush})` }} onClick={() => setView('settings')}>
-                   Open Control Center
-                 </button>
+
+                 {/* --- Popular Apps Section --- */}
+                 <div style={styles.popularSection}>
+                   <div style={styles.sectionHeaderRow}>
+                      <h3 style={styles.sectionTitleSmall}>Popular Apps</h3>
+                      <span style={styles.seeAllLink}>See All</span>
+                   </div>
+                   
+                   <div style={styles.appScrollContainer}>
+                     {popularApps.map((app) => (
+                       <motion.div 
+                         key={app.id} 
+                         style={styles.appItem}
+                         whileHover={{ scale: 1.05 }}
+                         whileTap={{ scale: 0.95 }}
+                       >
+                         <div style={{...styles.appIconCircle, background: app.color}}>
+                           {app.icon}
+                         </div>
+                         <span style={styles.appName}>{app.name}</span>
+                       </motion.div>
+                     ))}
+                   </div>
+                 </div>
+
+                 {/* --- Banner Carousel --- */}
+                 <div 
+                   style={styles.bannerContainer}
+                   onMouseEnter={() => setIsPaused(true)}
+                   onMouseLeave={() => setIsPaused(false)}
+                 >
+                   <AnimatePresence mode='wait'>
+                     <motion.div
+                       key={currentBanner}
+                       initial={{ opacity: 0, x: 50 }}
+                       animate={{ opacity: 1, x: 0 }}
+                       exit={{ opacity: 0, x: -50 }}
+                       transition={{ duration: 0.6, ease: "easeInOut" }}
+                       style={{
+                         ...styles.bannerCard,
+                         backgroundColor: banners[currentBanner].color
+                       }}
+                     >
+                       <div style={styles.bannerContent}>
+                         <div style={styles.bannerIconBox}>{banners[currentBanner].icon}</div>
+                         <h2 style={styles.bannerTitle}>{banners[currentBanner].title}</h2>
+                         <p style={styles.bannerDesc}>{banners[currentBanner].desc}</p>
+                         <button style={styles.bannerBtn} onClick={() => setView('settings')}>
+                           {banners[currentBanner].btn}
+                         </button>
+                       </div>
+                       {/* Background Decoration */}
+                       <div style={styles.bannerDeco}></div>
+                     </motion.div>
+                   </AnimatePresence>
+
+                   {/* Indicator Dots */}
+                   <div style={styles.indicatorContainer}>
+                     {banners.map((_, idx) => (
+                       <div 
+                         key={idx} 
+                         onClick={() => setCurrentBanner(idx)}
+                         style={{
+                           ...styles.indicatorDot,
+                           backgroundColor: currentBanner === idx ? '#fff' : 'rgba(255,255,255,0.4)',
+                           transform: currentBanner === idx ? 'scale(1.3)' : 'scale(1)'
+                         }} 
+                       />
+                     ))}
+                   </div>
+                 </div>
+
+                 {/* --- Quick Access --- */}
+                 <div style={styles.quickAccessSection}>
+                    <h3 style={styles.sectionHeader}>Quick Access</h3>
+                    <div style={styles.quickGrid}>
+                       <motion.div 
+                        style={styles.quickCard} 
+                        onClick={() => setView('settings')}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                       >
+                         <Terminal size={24} color={deepBlush}/>
+                         <span>Developer</span>
+                       </motion.div>
+                       <motion.div 
+                        style={styles.quickCard} 
+                        onClick={() => setView('settings')}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                       >
+                         <Briefcase size={24} color={deepBlush}/>
+                         <span>Clients</span>
+                       </motion.div>
+                       <motion.div 
+                        style={styles.quickCard} 
+                        onClick={() => setView('settings')}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        whileTap={{ scale: 0.98 }}
+                       >
+                         <ShieldCheck size={24} color={deepBlush}/>
+                         <span>Admin</span>
+                       </motion.div>
+                    </div>
+                 </div>
+
               </motion.main>
             )}
 
@@ -129,7 +301,6 @@ function App() {
 
                 <div style={styles.scrollArea}>
                   <AnimatePresence mode="wait">
-                    {/* இங்கே ஒவ்வொரு Component-க்கும் 'key' சேர்க்கப்பட்டுள்ளது 👇 */}
                     {!selectedRole && (
                       <RoleGateway key="gateway" onSelect={(r) => setSelectedRole(r)} theme={deepBlush} />
                     )}
@@ -159,7 +330,6 @@ function App() {
 // --- MEGA RENDERER ENGINE (The heart of the system) ---
 const RenderModuleContent = ({ module, themeColor }) => {
   const [activeTab, setActiveTab] = useState('sites'); // History/Feedback toggle
-  const [activeStep, setActiveStep] = useState(1); // Developer publish wizard
 
   switch(module.id) {
     // ==========================================
@@ -183,7 +353,7 @@ const RenderModuleContent = ({ module, themeColor }) => {
         {activeTab === 'sites' ? (
           <div style={styles.listArea}>
             <div style={styles.historyCard}>
-              <div style={styles.siteThumb}><img src={Mainlogo} width="24"/></div>
+              <div style={styles.siteThumb}><img src={Mainlogo} width="24" alt="logo"/></div>
               <div style={{flex:1}}><b>Global Web Guru</b><p>E-Commerce • Today 10:20 AM</p></div>
               <button style={styles.miniBtn}>Visit Again</button>
               <Trash2 size={16} color="#ddd"/>
@@ -251,8 +421,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
     // ==========================================
     // DEVELOPER MODULES LOGIC - WEB GLOBAL GURU
     // ==========================================
-    
-    // 1. Developer Profile
     case 'd_profile': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Developer Identity</div>
@@ -284,7 +452,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 2. Publish New Website
     case 'd_publish': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Publish New Website</div>
@@ -296,7 +463,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
             <option>Business</option>
           </select>
           <textarea style={styles.inputArea} placeholder="Website Description & Target Audience"></textarea>
-          
           <div style={styles.sectionHeader}>Source Code & Hosting</div>
           <input style={styles.input} placeholder="GitHub Repository Link" />
           <div style={styles.uploadBox}><UploadCloud size={20}/> Or Upload ZIP File</div>
@@ -305,7 +471,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
             <option>Web Global Guru Cloud</option>
             <option>AWS / GCP / Azure</option>
           </select>
-
           <div style={styles.sectionHeader}>Security & Domain</div>
           <input style={styles.input} placeholder="Connect Domain (Optional)" />
           <div style={styles.actionRow}>
@@ -316,7 +481,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 3. Buy Global Domain
     case 'd_buy_domain': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Buy Global Domain</div>
@@ -325,8 +489,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
             <input style={styles.searchInput} placeholder="Search domain (e.g. myapp.com)" />
             <button style={styles.searchBtn}>Search</button>
           </div>
-        
-          
           <div style={styles.sectionHeader}>Available Domains</div>
           <div style={styles.tableCard}>
              <div style={styles.tableRow}>
@@ -345,7 +507,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 4. Buy SSL Certificate
     case 'd_buy_ssl': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Secure Your App (SSL)</div>
@@ -369,7 +530,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 5. Website Publish Status
     case 'd_status': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Publish Status</div>
@@ -395,7 +555,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 6. Renewal Website
     case 'd_renewal_website': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Website Hosting Renewal</div>
@@ -414,7 +573,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 7. Renewal Domain
     case 'd_renewal_domain': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Domain Renewal</div>
@@ -424,7 +582,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
                <b>$12.99</b>
              </div>
              <button style={{...styles.mainBtnFull, background:themeColor, margin:'10px 0'}}>Renew Domain</button>
-             
              <div style={styles.tableRow}>
                <div><b>webguru.net</b><p>Expires: Dec 2026</p></div>
                <span style={{color:'green'}}>Active</span>
@@ -433,7 +590,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 8. SEO Ads Run
     case 'd_seo': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>SEO & Ads Campaign</div>
@@ -443,7 +599,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
             <input style={{...styles.input, flex:1}} placeholder="Daily Budget ($)" type="number" />
             <select style={{...styles.input, flex:1}}><option>Target: Global</option><option>Target: Local</option></select>
           </div>
-          
           <div style={styles.sectionHeader}>Performance Analytics</div>
           <div style={styles.statGrid}>
             <div style={styles.statCard}><h4>1.4k</h4><p>Total Clicks</p></div>
@@ -456,7 +611,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 9. Project List
     case 'd_project_list': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>My Projects</div>
@@ -474,7 +628,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 10. Projects Performance
     case 'd_performance': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Global Performance</div>
@@ -489,7 +642,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 11. Invite Developers
     case 'd_invite': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Team Management</div>
@@ -498,15 +650,13 @@ const RenderModuleContent = ({ module, themeColor }) => {
             <select style={{...styles.input, flex:1}}><option>Admin</option><option>Dev</option><option>Viewer</option></select>
           </div>
           <button style={{...styles.mainBtnFull, background:themeColor}}>Send Invite</button>
-
           <div style={{ ...styles.sectionHeader, marginTop: '20px' }}>Pending Invites</div>
           <div style={styles.tableRow}><div><b>alex@webguru.com</b><p>Role: Dev</p></div><span style={{color:'orange'}}>Pending</span></div>
           <div style={styles.tableRow}><div><b>sara@webguru.com</b><p>Role: Admin</p></div><span style={{color:'green'}}>Joined</span></div>
         </div>
     );
 
-    // 12. Feedback Share
-    case 'd_feedback': return (
+    case 'd_feed': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Share Feedback</div>
           <select style={styles.input}>
@@ -523,7 +673,6 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
-    // 13. Legal and Policy
     case 'd_legal': return (
         <div style={styles.deepPage}>
           <div style={styles.sectionHeader}>Legal & Guidelines</div>
@@ -624,6 +773,84 @@ const RenderModuleContent = ({ module, themeColor }) => {
         </div>
     );
 
+    case 'a_approve': return (
+      <div style={styles.deepPage}>
+        <div style={styles.sectionHeader}>Website Approval Queue</div>
+        <div style={styles.tableCard}>
+          <div style={styles.tableRow}>
+            <div><b>TechStart.io</b><p>Developer: John Doe</p></div>
+            <button style={styles.miniBtn}>Approve</button>
+          </div>
+          <div style={styles.tableRow}>
+            <div><b>MyShop.com</b><p>Developer: Jane Smith</p></div>
+            <button style={styles.miniBtn}>Approve</button>
+          </div>
+        </div>
+      </div>
+    );
+
+    case 'a_renew_list': return (
+      <div style={styles.deepPage}>
+        <div style={styles.sectionHeader}>Renewal Website List</div>
+        <div style={styles.tableCard}>
+          <div style={styles.tableRow}><div><b>E-Comm Pro</b><p>Expires: 15 Mar</p></div><b>$45.00</b></div>
+          <div style={styles.tableRow}><div><b>Blog Master</b><p>Expires: 20 Mar</p></div><b>$25.00</b></div>
+        </div>
+      </div>
+    );
+
+    case 'a_ads_view': return (
+      <div style={styles.deepPage}>
+        <div style={styles.sectionHeader}>Active Ad Campaigns</div>
+        <div style={styles.statGrid}>
+          <div style={styles.statCard}><h4>12</h4><p>Active</p></div>
+          <div style={styles.statCard}><h4>$2,450</h4><p>Revenue</p></div>
+        </div>
+      </div>
+    );
+
+    case 'a_ads_set': return (
+      <div style={styles.deepPage}>
+        <div style={styles.sectionHeader}>Ads Settings</div>
+        <ActionRow icon={<DollarSign/>} label="Global Ad Revenue Share" /><ActionRow icon={<Eye/>} label="Ad Visibility" isToggle />
+      </div>
+    );
+
+    case 'a_payments': return (
+      <div style={styles.deepPage}>
+        <div style={styles.sectionHeader}>Global Payments</div>
+        <div style={styles.tableCard}>
+          <div style={styles.tableRow}><div><b>Payment #1001</b><p>User: John</p></div><b style={{color:'green'}}>$45.00</b></div>
+          <div style={styles.tableRow}><div><b>Payment #1002</b><p>User: Jane</p></div><b style={{color:'green'}}>$120.00</b></div>
+        </div>
+      </div>
+    );
+
+    case 'a_profit': return (
+      <div style={styles.deepPage}>
+        <div style={styles.sectionHeader}>Global Profit Checker</div>
+        <div style={styles.walletCard}>
+          <p>Total Revenue</p>
+          <h1>$12,450</h1>
+        </div>
+        <div style={styles.statGrid}>
+          <div style={styles.statCard}><h4>$8,200</h4><p>Net Profit</p></div>
+          <div style={styles.statCard}><h4>65%</h4><p>Margin</p></div>
+        </div>
+      </div>
+    );
+
+    case 'a_legal': return (
+      <div style={styles.deepPage}>
+        <div style={styles.sectionHeader}>Legal & Policy Management</div>
+        <div style={styles.tableCard}>
+          <div style={styles.legalRow}><span>Privacy Policy</span> <Edit3 size={16} color={themeColor}/></div>
+          <div style={styles.legalRow}><span>Terms of Service</span> <Edit3 size={16} color={themeColor}/></div>
+          <div style={styles.legalRow}><span>Refund Policy</span> <Edit3 size={16} color={themeColor}/></div>
+        </div>
+      </div>
+    );
+
     // ================= COMMON LOGIC =================
     case 'u_legal': case 'd_legal': case 'c_legal': return (
         <div style={styles.deepPage}>
@@ -632,6 +859,18 @@ const RenderModuleContent = ({ module, themeColor }) => {
           ))}
           <div style={styles.acceptBox}><input type="checkbox" /> I accept global data guidelines</div>
         </div>
+    );
+
+    case 'c_renewal': return (
+      <div style={styles.deepPage}>
+        <div style={styles.sectionHeader}>Website Renewal</div>
+        <div style={styles.walletCard}>
+          <p>Your Website</p>
+          <h1>25 Days Left</h1>
+          <small>Expires: 30 March 2026</small>
+        </div>
+        <button style={{...styles.mainBtnFull, background:themeColor}}>Renew Now</button>
+      </div>
     );
 
     default: return <div style={styles.placeholder}>System node for {module.title} active.</div>;
@@ -699,11 +938,10 @@ const styles = {
     boxShadow: '0 30px 80px rgba(74, 29, 31, 0.1)', 
     overflow: 'hidden', 
     minHeight: '450px', 
-    margin: '20px auto 120px'}, // ✅ Added massive bottom margin to avoid overlap
+    margin: '20px auto 120px'},
   cardHeader: { padding: '30px 40px', display: 'flex', alignItems: 'center', gap: '20px', borderBottom: '1px solid #FDF2F3' },
   backCircle: { width: '45px', height: '45px', borderRadius: '15px', background: '#FDF2F3', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   sheetTitle: { fontSize: '20px', fontWeight: '800', color: '#4A1D1F', margin: 0 },
-  // ✅ Crucial Fix: Padding bottom ensures content isn't hidden behind floating footer
   scrollArea: { padding: '25px 35px 100px 35px', overflowY: 'auto' }, 
   verticalList: { display: 'flex', flexDirection: 'column', gap: '12px' },
   clickableRowCard: { background: '#FFF9F9', border: '1px solid #FDF2F3', borderRadius: '25px', padding: '18px 25px', display: 'flex', alignItems: 'center', gap: '20px', cursor: 'pointer', transition: '0.3s' },
@@ -721,7 +959,7 @@ const styles = {
   siteThumb: { width: '40px', height: '40px', background: '#fff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   miniBtn: { padding: '5px 12px', background: '#DD7A83', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: '700', cursor:'pointer' },
   btnRow: { display: 'flex', gap: '10px', marginBottom: '15px' },
-  outlineBtn: { flex: 1, padding: '10px', background: '#fff', border: '1px solid #ddd', borderRadius: '12px', fontSize: '12px', cursor:'pointer' },
+  outlineBtn: { flex: 1, padding: '10px', background: '#fff', border: '1px solid #ddd', borderRadius: '12px', fontSize: '12px', cursor:'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' },
   clearBtnFull: { width: '100%', padding: '12px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '12px', fontWeight: '800', marginTop: '10px', cursor:'pointer' },
   folderGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' },
   folder: { padding: '20px', background: '#FFF9F9', borderRadius: '18px', textAlign: 'center', fontWeight: '700', border: '1px solid #FDF2F3', display:'flex', flexDirection:'column', alignItems:'center', gap:'10px' },
@@ -732,38 +970,34 @@ const styles = {
   notifyCard: { padding: '15px', background: '#FFF9F9', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px', borderLeft: '4px solid #DD7A83' },
   pulseDot: { width: '10px', height: '10px', background: '#DD7A83', borderRadius: '50%' },
   ratingRow: { display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '25px' },
-  uploadBox: { padding: '20px', border: '2px dashed #ddd', borderRadius: '15px', textAlign: 'center', color: '#999', marginBottom: '15px', cursor: 'pointer' },
+  uploadBox: { padding: '20px', border: '2px dashed #ddd', borderRadius: '15px', textAlign: 'center', color: '#999', marginBottom: '15px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' },
   legalRow: { padding: '18px', borderBottom: '1px solid #FDF2F3', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
   acceptBox: { marginTop: '20px', fontSize: '12px', color: '#7D5A5C', display:'flex', gap:'10px', alignItems:'center' },
-  input: { width: '100%', padding: '15px', borderRadius: '12px', border: '1px solid #FDF2F3', marginBottom: '15px', fontFamily: 'inherit' },
-  inputArea: { width: '100%', height: '100px', padding: '15px', borderRadius: '12px', border: '1px solid #FDF2F3', marginBottom: '15px', fontFamily: 'inherit' },
-  sectionHeader: { fontSize: '12px', fontWeight: '800', color: '#DD7A83', margin: '20px 0 10px 5px', textTransform: 'uppercase' },
+  input: { width: '100%', padding: '15px', borderRadius: '12px', border: '1px solid #FDF2F3', marginBottom: '15px', fontFamily: 'inherit', boxSizing: 'border-box', background: '#fff' },
+  inputArea: { width: '100%', height: '100px', padding: '15px', borderRadius: '12px', border: '1px solid #FDF2F3', marginBottom: '15px', fontFamily: 'inherit', boxSizing: 'border-box', background: '#fff' },
+  sectionHeader: { fontSize: '14px', fontWeight: '800', color: '#4A1D1F', margin: '20px 0 10px 5px', textAlign: 'left', textTransform: 'uppercase' },
   detailRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 0', borderBottom: '1px solid #FDF2F3' },
-  toggle: { width: '36px', height: '18px', borderRadius: '10px', padding: '2px' },
+  toggle: { width: '36px', height: '18px', borderRadius: '10px', padding: '2px', cursor: 'pointer' },
   toggleCircle: { width: '14px', height: '14px', background: '#fff', borderRadius: '50%', transition: '0.3s' },
-  profileUpload: { width: '80px', height: '80px', borderRadius: '50%', background: '#FDF2F3', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed #DD7A83' },
+  profileUpload: { width: '80px', height: '80px', borderRadius: '50%', background: '#FDF2F3', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed #DD7A83', flexDirection: 'column', gap: '5px' },
   inputRow: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' },
   statusBanner: { padding: '12px', background: '#e6f3ef', borderRadius: '10px', textAlign: 'center', color: '#01875f', fontSize: '13px' },
   stepBar: { display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '25px' },
   stepDot: { width: '25px', height: '25px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#fff' },
-  mainBtnFull: { width: '100%', padding: '15px', borderRadius: '12px', border: 'none', color: '#fff', fontWeight: '800', cursor: 'pointer' },
+  mainBtnFull: { width: '100%', padding: '15px', borderRadius: '12px', border: 'none', color: '#fff', fontWeight: '800', cursor: 'pointer', boxSizing: 'border-box' },
   tableCard: { background: '#FFF9F9', borderRadius: '15px', padding: '10px', marginBottom: '15px' },
-  tableRow: { display: 'flex', justifyContent: 'space-between', padding: '15px 10px', borderBottom: '1px solid #f1f1f1', fontSize: '14px' },
+  tableRow: { display: 'flex', justifyContent: 'space-between', padding: '15px 10px', borderBottom: '1px solid #f1f1f1', fontSize: '14px', alignItems: 'center' },
   rejectionBox: { padding: '10px', background: '#fee2e2', borderRadius: '10px', color: '#dc2626', fontSize: '12px', marginTop: '10px' },
   infoRow: { display: 'flex', justifyContent: 'space-between', padding: '15px 0', borderBottom: '1px solid #FDF2F3' },
   infoBanner: { padding: '12px', background: '#FDF2F3', borderRadius: '10px', color: '#7D5A5C', fontSize: '13px', textAlign: 'center', marginBottom: '15px' },
   chartMock: { height: '100px', background: '#FFF9F9', borderRadius: '20px', display: 'flex', alignItems: 'flex-end', gap: '5px', padding: '10px' },
   bar: { flex: 1, borderRadius: '3px 3px 0 0' },
-  dangerBtn: { width: '100%', padding: '14px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '12px', fontWeight: '800', marginTop: '10px' },
+  dangerBtn: { width: '100%', padding: '14px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '12px', fontWeight: '800', marginTop: '10px', cursor: 'pointer' },
   vCard: { marginTop: '40px', padding: '15px', background: '#F9EFF0', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' },
   vText: { color: '#7D5A5C', fontSize: '11px', fontWeight: '700' },
   placeholder: { padding: '40px', textAlign: 'center', color: '#999' },
   enterpriseBadge: { marginTop: '20px', padding: '10px', background: '#4A1D1F', color: '#fff', textAlign: 'center', borderRadius: '10px', fontSize: '12px', fontWeight: '700' },
   filterBar: { padding: '10px', background: '#f9f9f9', borderRadius: '8px', marginBottom: '10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '10px' },
-
-  
-  
-  
   profileHeader: { display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' },
   searchContainer: { display: 'flex', gap: '10px', background: '#f5f5f5', padding: '5px', borderRadius: '8px', alignItems: 'center' },
   searchInput: { flex: 1, border: 'none', background: 'transparent', outline: 'none', padding: '8px' },
@@ -772,46 +1006,40 @@ const styles = {
   planGrid: { display: 'flex', gap: '15px', marginTop: '10px' },
   planCard: { flex: 1, background: '#fff', padding: '15px', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', textAlign: 'center' },
   actionRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', padding: '12px 15px', borderRadius: '8px', border: '1px solid #eee', marginBottom: '15px' },
+  searchLogItem: { display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#FFF9F9', borderRadius: '10px', marginBottom: '10px', color: '#7D5A5C' },
+  listArea: { marginBottom: '15px' },
+  advancedBox: { marginTop: '20px', padding: '15px', background: '#FDF2F3', borderRadius: '15px' },
 
-  // Modern Dashboard Additional Styles
-  devDashboardHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' },
-  devTitle: { fontSize: '18px', fontWeight: '800', color: '#4A1D1F', margin: 0 },
-  devSubtitle: { fontSize: '12px', color: '#7D5A5C', margin: 0 },
-  devStatCard: { flex: 1, padding: '20px', background: '#FFF9F9', borderRadius: '20px', textAlign: 'center', border: '1px solid #FDF2F3' },
-  devStatValue: { fontSize: '28px', fontWeight: '900', color: '#4A1D1F', margin: '5px 0' },
-  devStatLabel: { fontSize: '11px', color: '#7D5A5C', textTransform: 'uppercase', fontWeight: '600' },
-  devCard: { background: '#fff', borderRadius: '20px', padding: '20px', marginBottom: '15px', boxShadow: '0 4px 20px rgba(74, 29, 31, 0.05)' },
-  devCardHeader: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid #FDF2F3' },
-  devCardTitle: { fontSize: '16px', fontWeight: '800', color: '#4A1D1F', margin: 0 },
-  devBadge: { padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: '700' },
-  devBadgeSuccess: { background: '#d1fae5', color: '#059669' },
-  devBadgeWarning: { background: '#fef3c7', color: '#d97706' },
-  devBadgeError: { background: '#fee2e2', color: '#dc2626' },
-  devBadgeInfo: { background: '#dbeafe', color: '#2563eb' },
-  devProgressBar: { height: '8px', background: '#FDF2F3', borderRadius: '4px', overflow: 'hidden' },
-  devProgressFill: { height: '100%', borderRadius: '4px', transition: 'width 0.3s ease' },
-  devInputGroup: { marginBottom: '15px' },
-  devInputLabel: { display: 'block', fontSize: '12px', fontWeight: '700', color: '#4A1D1F', marginBottom: '8px' },
-  devSelect: { width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #FDF2F3', background: '#fff', fontSize: '14px', color: '#4A1D1F' },
-  devBtn: { padding: '14px 24px', borderRadius: '12px', border: 'none', fontWeight: '700', cursor: 'pointer', transition: '0.2s', fontSize: '14px' },
-  devBtnPrimary: { background: 'linear-gradient(135deg, #DD7A83, #E3BFC3)', color: '#fff' },
-  devBtnSecondary: { background: '#fff', color: '#4A1D1F', border: '1px solid #ddd' },
-  devBtnOutline: { background: 'transparent', color: '#DD7A83', border: '2px solid #DD7A83' },
-  devTable: { width: '100%', borderCollapse: 'collapse' },
-  devTableRow: { borderBottom: '1px solid #FDF2F3' },
-  devTableCell: { padding: '15px 10px', fontSize: '13px', color: '#4A1D1F' },
-  devTableHeader: { padding: '15px 10px', fontSize: '11px', fontWeight: '700', color: '#7D5A5C', textTransform: 'uppercase' },
-  devAvatar: { width: '40px', height: '40px', borderRadius: '50%', background: '#FDF2F3', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  devAvatarGroup: { display: 'flex' },
-  devAvatarOver: { width: '30px', height: '30px', borderRadius: '50%', background: '#DD7A83', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: '700', border: '2px solid #fff', marginLeft: '-10px' },
-  devTooltip: { position: 'relative', display: 'inline-flex' },
-  devDropdown: { position: 'absolute', top: '100%', right: 0, background: '#fff', borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.1)', padding: '10px', minWidth: '150px', zIndex: 100 },
-  devDropdownItem: { padding: '10px 15px', fontSize: '13px', color: '#4A1D1F', cursor: 'pointer', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '10px' },
-  devEmptyState: { textAlign: 'center', padding: '40px 20px' },
-  devEmptyIcon: { width: '60px', height: '60px', background: '#FDF2F3', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px' },
-  devEmptyTitle: { fontSize: '16px', fontWeight: '800', color: '#4A1D1F', marginBottom: '5px' },
-  devEmptyText: { fontSize: '13px', color: '#7D5A5C' },
+  // --- NEW STYLES FOR HOMEPAGE ---
+  navScrollContainer: { display: 'flex', gap: '12px', overflowX: 'auto', padding: '0 5px 15px 5px', whiteSpace: 'nowrap', scrollbarWidth: 'none', marginBottom: '10px' },
+  navTab: { padding: '10px 20px', borderRadius: '20px', background: 'transparent', border: '1px solid transparent', color: '#7D5A5C', fontWeight: '600', cursor: 'pointer', transition: '0.2s', fontSize: '14px', display:'flex', alignItems:'center', gap:'8px', whiteSpace: 'nowrap' },
+  navTabActive: { padding: '10px 20px', borderRadius: '20px', background: '#F9EFF0', border: '1px solid #DD7A83', color: '#DD7A83', fontWeight: '700', cursor: 'pointer', transition: '0.2s', fontSize: '14px', display:'flex', alignItems:'center', gap:'8px', whiteSpace: 'nowrap' },
+  
+  bannerContainer: { position: 'relative', width: '100%', height: '240px', overflow: 'hidden', borderRadius: '25px', boxShadow: '0 15px 40px rgba(0,0,0,0.1)', marginBottom: '30px' },
+  bannerCard: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: '25px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', color: '#fff' },
+  bannerContent: { position: 'relative', zIndex: 2, maxWidth: '60%' },
+  bannerTitle: { fontSize: '28px', fontWeight: '800', margin: '0 0 10px 0', lineHeight: 1.1 },
+  bannerDesc: { fontSize: '14px', opacity: 0.9, marginBottom: '20px' },
+  bannerBtn: { background: '#fff', color: '#000', border: 'none', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer' },
+  bannerIconBox: { marginBottom: '15px', opacity: 0.8 },
+  bannerDeco: { position: 'absolute', right: '-20px', bottom: '-40px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' },
+  
+  indicatorContainer: { position: 'absolute', bottom: '20px', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '8px', zIndex: 10 },
+  indicatorDot: { width: '8px', height: '8px', borderRadius: '50%', cursor: 'pointer', transition: 'all 0.3s' },
 
+  quickAccessSection: { textAlign: 'left', marginTop: '20px' },
+  quickGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' },
+  quickCard: { background: '#fff', padding: '20px', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', boxShadow: '0 5px 20px rgba(0,0,0,0.03)', cursor: 'pointer', fontWeight: '600', fontSize: '13px', color: '#4A1D1F' },
+
+  // --- Popular Apps Section Styles ---
+  popularSection: { marginBottom: '25px', textAlign: 'left' },
+  sectionHeaderRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 5px', marginBottom: '15px' },
+  sectionTitleSmall: { fontSize: '16px', fontWeight: '800', color: '#4A1D1F', margin: 0 },
+  seeAllLink: { fontSize: '12px', fontWeight: '600', color: '#DD7A83', cursor: 'pointer' },
+  appScrollContainer: { display: 'flex', gap: '20px', overflowX: 'auto', padding: '5px 5px 15px 5px', scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory' },
+  appItem: { display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '65px', cursor: 'pointer', scrollSnapAlign: 'start' },
+  appIconCircle: { width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px', color: '#fff', boxShadow: '0 5px 15px rgba(0,0,0,0.1)', border: '2px solid #fff' },
+  appName: { fontSize: '11px', fontWeight: '600', color: '#4A1D1F', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '65px' },
 };
 
 export default App;
