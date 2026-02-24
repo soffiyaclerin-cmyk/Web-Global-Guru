@@ -52,9 +52,10 @@ function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const isMobile = windowWidth < 768;
-  const isTablet = windowWidth >= 768 && windowWidth < 1024;
-  const isDesktop = windowWidth >= 1024;
+  // Breakpoints: Mobile < 640px, Tablet 640-1024px, Desktop > 1024px
+  const isMobile = windowWidth < 640;
+  const isTablet = windowWidth >= 640 && windowWidth <= 1024;
+  const isDesktop = windowWidth > 1024;
 
   const goBack = () => {
     if (activeModule) setActiveModule(null);
@@ -226,20 +227,26 @@ function App() {
                 {/* Navigation Tabs */}
                 <div style={{
                   ...styles.navScrollContainer,
-                  justifyContent: isDesktop ? 'center' : 'flex-start'
+                  justifyContent: isDesktop ? 'center' : 'flex-start',
+                  overflowX: isMobile ? 'auto' : 'visible',
+                  WebkitOverflowScrolling: 'touch',
                 }}>
                   {navTabs.map((tab) => (
                     <button 
                       key={tab.name} 
                       style={{
                         ...(activeTab === tab.name ? styles.navTabActive : styles.navTab),
-                        padding: isMobile ? '8px 16px' : '10px 24px',
-                        fontSize: isMobile ? '12px' : '14px'
+                        padding: isMobile ? '8px 14px' : '10px 20px',
+                        fontSize: isMobile ? '11px' : '13px',
+                        flexShrink: 0,
+                        minWidth: isMobile ? 'auto' : 'auto',
                       }} 
                       onClick={() => setActiveTab(tab.name)}
                     >
-                      {tab.icon}
-                      {tab.name}
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {tab.icon}
+                        {tab.name}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -457,9 +464,11 @@ function App() {
                 exit={{ opacity: 0 }} 
                 style={{
                   ...styles.dashboardCard,
-                  borderRadius: isDesktop ? '32px' : '24px',
-                  margin: isMobile ? '10px auto 100px' : '20px auto 120px',
-                  maxWidth: isDesktop ? '900px' : '100%'
+                  borderRadius: isDesktop ? '32px' : isTablet ? '20px' : '16px',
+                  margin: isMobile ? '10px 8px 100px' : isTablet ? '15px auto 120px' : '20px auto 120px',
+                  maxWidth: isDesktop ? '900px' : isTablet ? '90%' : '100%',
+                  width: isMobile ? 'calc(100% - 16px)' : '100%',
+                  padding: isMobile ? '0' : '0',
                 }}
               >
                 <div style={{
@@ -662,15 +671,20 @@ const styles = {
   },
   navScrollContainer: { 
     display: 'flex', 
-    gap: '12px', 
+    flexWrap: 'nowrap',
+    gap: '10px', 
     overflowX: 'auto', 
+    overflowY: 'hidden',
     padding: '0 5px 15px 5px', 
     whiteSpace: 'nowrap', 
     scrollbarWidth: 'none', 
-    marginBottom: '20px' 
+    marginBottom: '20px',
+    scrollBehavior: 'smooth',
+    WebkitOverflowScrolling: 'touch',
+    msOverflowStyle: 'none',
   },
   navTab: { 
-    padding: '10px 24px', 
+    padding: '10px 20px', 
     borderRadius: '20px', 
     background: 'transparent', 
     border: '1px solid transparent', 
@@ -682,10 +696,11 @@ const styles = {
     alignItems: 'center', 
     gap: '8px', 
     whiteSpace: 'nowrap',
-    fontFamily: 'inherit'
+    fontFamily: 'inherit',
+    flexShrink: 0,
   },
   navTabActive: { 
-    padding: '10px 24px', 
+    padding: '10px 20px', 
     borderRadius: '20px', 
     background: '#6366F1', 
     border: '1px solid #6366F1', 
@@ -697,7 +712,8 @@ const styles = {
     alignItems: 'center', 
     gap: '8px', 
     whiteSpace: 'nowrap',
-    fontFamily: 'inherit'
+    fontFamily: 'inherit',
+    flexShrink: 0,
   },
   popularSection: { 
     marginBottom: '30px', 
