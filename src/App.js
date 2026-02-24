@@ -27,12 +27,34 @@ function App() {
   const [activeTab, setActiveTab] = useState('For You');
   const [currentBanner, setCurrentBanner] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  const deepBlush = '#DD7A83';
-  const lightBlush = '#E3BFC3';
-  const darkBrown = '#4A1D1F';
-  const textBrown = '#4A1D1F';
-  const mutedText = '#7D5A5C';
+  // Theme colors - Modern palette
+  const primary = '#6366F1'; // Indigo
+  const primaryLight = '#818CF8';
+  const primaryDark = '#4F46E5';
+  const accent = '#EC4899'; // Pink accent
+  const success = '#10B981';
+  const warning = '#F59E0B';
+  const danger = '#EF4444';
+  
+  // Neutral colors
+  const dark = '#1E293B';
+  const gray = '#64748B';
+  const lightGray = '#E2E8F0';
+  const lightest = '#F8FAFC';
+  const white = '#FFFFFF';
+
+  // Detect screen size
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 768;
+  const isTablet = windowWidth >= 768 && windowWidth < 1024;
+  const isDesktop = windowWidth >= 1024;
 
   const goBack = () => {
     if (activeModule) setActiveModule(null);
@@ -44,13 +66,13 @@ function App() {
 
   const banners = [
     { id: 1, title: "Global Dev Tools", desc: "Deploy React apps in seconds with our new cloud engine.", btn: "Start Building", color: "#4A1D1F", icon: <Terminal size={40} /> },
-    { id: 2, title: "Analytics Pro", desc: "Track every visitor with real-time heatmaps.", btn: "View Charts", color: "#DD7A83", icon: <BarChart3 size={40} /> },
-    { id: 3, title: "Secure Guard", desc: "Enterprise-grade SSL & Firewall protection included.", btn: "Secure Now", color: "#2E3B55", icon: <ShieldCheck size={40} /> },
-    { id: 4, title: "SEO Masterclass", desc: "Rank #1 on search engines with our AI keywords.", btn: "Learn SEO", color: "#D97706", icon: <TrendingUp size={40} /> },
-    { id: 5, title: "Client Portal", desc: "Manage billing and invoices in one seamless dashboard.", btn: "Manage", color: "#059669", icon: <Users size={40} /> },
-    { id: 6, title: "Cloud Storage", desc: "50GB Free storage for all new developer accounts.", btn: "Claim Offer", color: "#2563EB", icon: <CloudLightning size={40} /> },
-    { id: 7, title: "Domain Hunter", desc: "Find the perfect premium domain for your brand.", btn: "Search", color: "#7C3AED", icon: <Globe size={40} /> },
-    { id: 8, title: "24/7 Support", desc: "Our expert engineers are here to help you debug.", btn: "Chat Now", color: "#DB2777", icon: <MessageSquare size={40} /> },
+    { id: 2, title: "Analytics Pro", desc: "Track every visitor with real-time heatmaps.", btn: "View Charts", color: "#6366F1", icon: <BarChart3 size={40} /> },
+    { id: 3, title: "Secure Guard", desc: "Enterprise-grade SSL & Firewall protection included.", btn: "Secure Now", color: "#10B981", icon: <ShieldCheck size={40} /> },
+    { id: 4, title: "SEO Masterclass", desc: "Rank #1 on search engines with our AI keywords.", btn: "Learn SEO", color: "#F59E0B", icon: <TrendingUp size={40} /> },
+    { id: 5, title: "Client Portal", desc: "Manage billing and invoices in one seamless dashboard.", btn: "Manage", color: "#EC4899", icon: <Users size={40} /> },
+    { id: 6, title: "Cloud Storage", desc: "50GB Free storage for all new developer accounts.", btn: "Claim Offer", color: "#3B82F6", icon: <CloudLightning size={40} /> },
+    { id: 7, title: "Domain Hunter", desc: "Find the perfect premium domain for your brand.", btn: "Search", color: "#8B5CF6", icon: <Globe size={40} /> },
+    { id: 8, title: "24/7 Support", desc: "Our expert engineers are here to help you debug.", btn: "Chat Now", color: "#EF4444", icon: <MessageSquare size={40} /> },
   ];
 
   useEffect(() => {
@@ -146,102 +168,397 @@ function App() {
     }
   };
 
+  // Responsive styles based on screen size
+  const getContainerWidth = () => {
+    if (isDesktop) return '1400px';
+    if (isTablet) return '100%';
+    return '100%';
+  };
+
+  const getPadding = () => {
+    if (isDesktop) return '0 40px';
+    if (isTablet) return '0 24px';
+    return '0 16px';
+  };
+
+  const getBannerHeight = () => {
+    if (isDesktop) return '320px';
+    if (isTablet) return '280px';
+    return '220px';
+  };
+
   return (
-    <div style={styles.appWrapper}>
-      <Header t={{brandTagline: "SILK WEB SYSTEMS"}} onProfileClick={() => setView('settings')} currentView={view} />
-      <div style={styles.mainBody}>
-        <div style={styles.mainContainer}>
+    <div style={{
+      ...styles.appWrapper,
+      background: isDesktop ? `linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%)` : lightest
+    }}>
+      <Header 
+        t={{brandTagline: "SILK WEB SYSTEMS"}} 
+        onProfileClick={() => setView('settings')} 
+        currentView={view}
+        isMobile={isMobile}
+        isTablet={isTablet}
+        isDesktop={isDesktop}
+      />
+      
+      <div style={{
+        ...styles.mainBody,
+        padding: isDesktop ? '30px 0' : '20px 0'
+      }}>
+        <div style={{
+          ...styles.mainContainer,
+          maxWidth: getContainerWidth(),
+          padding: getPadding()
+        }}>
           <AnimatePresence mode="wait">
             {view === 'home' && (
-              <motion.main key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={styles.homeView}>
-                 <div style={styles.navScrollContainer}>
-                   {navTabs.map((tab) => (
-                     <button key={tab.name} style={activeTab === tab.name ? styles.navTabActive : styles.navTab} onClick={() => setActiveTab(tab.name)}>
-                       {tab.icon}
-                       {tab.name}
-                     </button>
-                   ))}
-                 </div>
+              <motion.main 
+                key="home" 
+                initial={{ opacity: 0 }} 
+                animate={{ opacity: 1 }} 
+                exit={{ opacity: 0 }} 
+                style={{
+                  ...styles.homeView,
+                  maxWidth: isDesktop ? '1200px' : '100%',
+                  margin: '0 auto'
+                }}
+              >
+                {/* Navigation Tabs */}
+                <div style={{
+                  ...styles.navScrollContainer,
+                  justifyContent: isDesktop ? 'center' : 'flex-start'
+                }}>
+                  {navTabs.map((tab) => (
+                    <button 
+                      key={tab.name} 
+                      style={{
+                        ...(activeTab === tab.name ? styles.navTabActive : styles.navTab),
+                        padding: isMobile ? '8px 16px' : '10px 24px',
+                        fontSize: isMobile ? '12px' : '14px'
+                      }} 
+                      onClick={() => setActiveTab(tab.name)}
+                    >
+                      {tab.icon}
+                      {tab.name}
+                    </button>
+                  ))}
+                </div>
 
-                 <div style={styles.popularSection}>
-                   <div style={styles.sectionHeaderRow}>
-                      <h3 style={styles.sectionTitleSmall}>Popular Apps</h3>
-                      <span style={styles.seeAllLink}>See All</span>
-                   </div>
-                   <div style={styles.appScrollContainer}>
-                     {popularApps.map((app) => (
-                       <motion.div key={app.id} style={styles.appItem} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                         <div style={{...styles.appIconCircle, background: app.color}}>{app.icon}</div>
-                         <span style={styles.appName}>{app.name}</span>
-                       </motion.div>
-                     ))}
-                   </div>
-                 </div>
+                {/* Popular Apps Section */}
+                <div style={styles.popularSection}>
+                  <div style={{
+                    ...styles.sectionHeaderRow,
+                    flexDirection: isMobile ? 'column' : 'row',
+                    alignItems: isMobile ? 'flex-start' : 'center',
+                    gap: isMobile ? '8px' : '0'
+                  }}>
+                    <h3 style={styles.sectionTitleSmall}>Popular Apps</h3>
+                    <span style={styles.seeAllLink}>See All</span>
+                  </div>
+                  <div style={{
+                    ...styles.appScrollContainer,
+                    paddingBottom: isMobile ? '10px' : '15px'
+                  }}>
+                    {popularApps.map((app) => (
+                      <motion.div 
+                        key={app.id} 
+                        style={{
+                          ...styles.appItem,
+                          minWidth: isMobile ? '55px' : '65px'
+                        }} 
+                        whileHover={{ scale: 1.05 }} 
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <div style={{
+                          ...styles.appIconCircle, 
+                          background: app.color,
+                          width: isMobile ? '50px' : '60px',
+                          height: isMobile ? '50px' : '60px'
+                        }}>
+                          {React.cloneElement(app.icon, { size: isMobile ? 18 : 22 })}
+                        </div>
+                        <span style={{
+                          ...styles.appName,
+                          maxWidth: isMobile ? '55px' : '65px',
+                          fontSize: isMobile ? '10px' : '11px'
+                        }}>
+                          {app.name}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
 
-                 <div style={styles.bannerContainer} onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
-                   <AnimatePresence mode='wait'>
-                     <motion.div key={currentBanner} initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }} transition={{ duration: 0.6, ease: "easeInOut" }} style={{...styles.bannerCard, backgroundColor: banners[currentBanner].color}}>
-                       <div style={styles.bannerContent}>
-                         <div style={styles.bannerIconBox}>{banners[currentBanner].icon}</div>
-                         <h2 style={styles.bannerTitle}>{banners[currentBanner].title}</h2>
-                         <p style={styles.bannerDesc}>{banners[currentBanner].desc}</p>
-                         <button style={styles.bannerBtn} onClick={() => setView('settings')}>{banners[currentBanner].btn}</button>
-                       </div>
-                       <div style={styles.bannerDeco}></div>
-                     </motion.div>
-                   </AnimatePresence>
-                   <div style={styles.indicatorContainer}>
-                     {banners.map((_, idx) => (
-                       <div key={idx} onClick={() => setCurrentBanner(idx)} style={{...styles.indicatorDot, backgroundColor: currentBanner === idx ? '#fff' : 'rgba(255,255,255,0.4)', transform: currentBanner === idx ? 'scale(1.3)' : 'scale(1)'}} />
-                     ))}
-                   </div>
-                 </div>
+                {/* Banner Section */}
+                <div style={{
+                  ...styles.bannerContainer,
+                  height: getBannerHeight(),
+                  borderRadius: isDesktop ? '32px' : '20px'
+                }} 
+                onMouseEnter={() => setIsPaused(true)} 
+                onMouseLeave={() => setIsPaused(false)}
+                >
+                  <AnimatePresence mode='wait'>
+                    <motion.div 
+                      key={currentBanner} 
+                      initial={{ opacity: 0, x: 50 }} 
+                      animate={{ opacity: 1, x: 0 }} 
+                      exit={{ opacity: 0, x: -50 }} 
+                      transition={{ duration: 0.6, ease: "easeInOut" }} 
+                      style={{
+                        ...styles.bannerCard, 
+                        backgroundColor: banners[currentBanner].color,
+                        borderRadius: isDesktop ? '32px' : '20px',
+                        padding: isDesktop ? '50px' : isMobile ? '25px' : '35px'
+                      }}
+                    >
+                      <div style={{
+                        ...styles.bannerContent,
+                        maxWidth: isMobile ? '100%' : '60%'
+                      }}>
+                        <div style={styles.bannerIconBox}>{banners[currentBanner].icon}</div>
+                        <h2 style={{
+                          ...styles.bannerTitle,
+                          fontSize: isDesktop ? '36px' : isMobile ? '22px' : '28px'
+                        }}>
+                          {banners[currentBanner].title}
+                        </h2>
+                        <p style={{
+                          ...styles.bannerDesc,
+                          fontSize: isMobile ? '12px' : '14px'
+                        }}>
+                          {banners[currentBanner].desc}
+                        </p>
+                        <button style={{
+                          ...styles.bannerBtn,
+                          padding: isMobile ? '8px 18px' : '10px 24px',
+                          fontSize: isMobile ? '12px' : '14px'
+                        }} 
+                        onClick={() => setView('settings')}
+                        >
+                          {banners[currentBanner].btn}
+                        </button>
+                      </div>
+                      <div style={{
+                        ...styles.bannerDeco,
+                        width: isDesktop ? '300px' : '200px',
+                        height: isDesktop ? '300px' : '200px',
+                        right: isDesktop ? '-50px' : '-20px'
+                      }}></div>
+                    </motion.div>
+                  </AnimatePresence>
+                  <div style={styles.indicatorContainer}>
+                    {banners.map((_, idx) => (
+                      <div 
+                        key={idx} 
+                        onClick={() => setCurrentBanner(idx)} 
+                        style={{
+                          ...styles.indicatorDot, 
+                          backgroundColor: currentBanner === idx ? '#fff' : 'rgba(255,255,255,0.4)', 
+                          transform: currentBanner === idx ? 'scale(1.3)' : 'scale(1)',
+                          width: isMobile ? '6px' : '8px',
+                          height: isMobile ? '6px' : '8px'
+                        }} 
+                      />
+                    ))}
+                  </div>
+                </div>
 
-                 <div style={styles.quickAccessSection}>
-                    <h3 style={styles.sectionHeader}>Quick Access</h3>
-                    <div style={styles.quickGrid}>
-                       <motion.div style={styles.quickCard} onClick={() => setView('settings')} whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
-                         <Terminal size={24} color={deepBlush}/>
-                         <span>Developer</span>
-                       </motion.div>
-                       <motion.div style={styles.quickCard} onClick={() => setView('settings')} whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
-                         <Briefcase size={24} color={deepBlush}/>
-                         <span>Clients</span>
-                       </motion.div>
-                       <motion.div style={styles.quickCard} onClick={() => setView('settings')} whileHover={{ scale: 1.02, y: -2 }} whileTap={{ scale: 0.98 }}>
-                         <ShieldCheck size={24} color={deepBlush}/>
-                         <span>Admin</span>
-                       </motion.div>
-                    </div>
-                 </div>
+                {/* Quick Access Section */}
+                <div style={styles.quickAccessSection}>
+                  <h3 style={{
+                    ...styles.sectionHeader,
+                    fontSize: isMobile ? '14px' : '16px'
+                  }}>
+                    Quick Access
+                  </h3>
+                  <div style={{
+                    ...styles.quickGrid,
+                    gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : isTablet ? 'repeat(3, 1fr)' : 'repeat(6, 1fr)',
+                    gap: isMobile ? '10px' : '15px'
+                  }}>
+                    <motion.div 
+                      style={{
+                        ...styles.quickCard,
+                        padding: isMobile ? '15px' : '20px'
+                      }} 
+                      onClick={() => setView('settings')} 
+                      whileHover={{ scale: 1.02, y: -2 }} 
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Terminal size={isMobile ? 20 : 24} color={primary}/>
+                      <span style={{ fontSize: isMobile ? '11px' : '13px' }}>Developer</span>
+                    </motion.div>
+                    <motion.div 
+                      style={{
+                        ...styles.quickCard,
+                        padding: isMobile ? '15px' : '20px'
+                      }} 
+                      onClick={() => setView('settings')} 
+                      whileHover={{ scale: 1.02, y: -2 }} 
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Briefcase size={isMobile ? 20 : 24} color={primary}/>
+                      <span style={{ fontSize: isMobile ? '11px' : '13px' }}>Clients</span>
+                    </motion.div>
+                    <motion.div 
+                      style={{
+                        ...styles.quickCard,
+                        padding: isMobile ? '15px' : '20px'
+                      }} 
+                      onClick={() => setView('settings')} 
+                      whileHover={{ scale: 1.02, y: -2 }} 
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <ShieldCheck size={isMobile ? 20 : 24} color={primary}/>
+                      <span style={{ fontSize: isMobile ? '11px' : '13px' }}>Admin</span>
+                    </motion.div>
+                    {isDesktop && (
+                      <>
+                        <motion.div 
+                          style={{...styles.quickCard, padding: '20px'}} 
+                          onClick={() => setView('settings')} 
+                          whileHover={{ scale: 1.02, y: -2 }} 
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Globe size={24} color={primary}/>
+                          <span style={{ fontSize: '13px' }}>Domains</span>
+                        </motion.div>
+                        <motion.div 
+                          style={{...styles.quickCard, padding: '20px'}} 
+                          onClick={() => setView('settings')} 
+                          whileHover={{ scale: 1.02, y: -2 }} 
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <BarChart3 size={24} color={primary}/>
+                          <span style={{ fontSize: '13px' }}>Analytics</span>
+                        </motion.div>
+                        <motion.div 
+                          style={{...styles.quickCard, padding: '20px'}} 
+                          onClick={() => setView('settings')} 
+                          whileHover={{ scale: 1.02, y: -2 }} 
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Shield size={24} color={primary}/>
+                          <span style={{ fontSize: '13px' }}>Security</span>
+                        </motion.div>
+                      </>
+                    )}
+                  </div>
+                </div>
               </motion.main>
             )}
 
             {view === 'settings' && (
-              <motion.div key="settings" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} style={styles.dashboardCard}>
-                <div style={styles.cardHeader}>
-                  <button onClick={goBack} style={styles.backCircle}><ArrowLeft size={20} color={deepBlush} /></button>
-                  <h2 style={styles.sheetTitle}>{activeModule ? activeModule.title : selectedRole ? roleData[selectedRole].title : "Control Center"}</h2>
+              <motion.div 
+                key="settings" 
+                initial={{ opacity: 0, y: 20 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                exit={{ opacity: 0 }} 
+                style={{
+                  ...styles.dashboardCard,
+                  borderRadius: isDesktop ? '32px' : '24px',
+                  margin: isMobile ? '10px auto 100px' : '20px auto 120px',
+                  maxWidth: isDesktop ? '900px' : '100%'
+                }}
+              >
+                <div style={{
+                  ...styles.cardHeader,
+                  padding: isMobile ? '20px' : '30px 40px',
+                  flexDirection: isMobile ? 'row' : 'row',
+                  gap: isMobile ? '12px' : '20px'
+                }}>
+                  <button 
+                    onClick={goBack} 
+                    style={{
+                      ...styles.backCircle,
+                      width: isMobile ? '38px' : '45px',
+                      height: isMobile ? '38px' : '45px'
+                    }}
+                  >
+                    <ArrowLeft size={isMobile ? 18 : 20} color={primary} />
+                  </button>
+                  <h2 style={{
+                    ...styles.sheetTitle,
+                    fontSize: isMobile ? '16px' : '20px'
+                  }}>
+                    {activeModule ? activeModule.title : selectedRole ? roleData[selectedRole].title : "Control Center"}
+                  </h2>
                 </div>
-                <div style={styles.scrollArea}>
+                <div style={{
+                  ...styles.scrollArea,
+                  padding: isMobile ? '15px' : '25px 35px 100px 35px'
+                }}>
                   <AnimatePresence mode="wait">
-                    {!selectedRole && (<RoleGateway key="gateway" onSelect={(r) => setSelectedRole(r)} theme={deepBlush} />)}
+                    {!selectedRole && (
+                      <RoleGateway 
+                        key="gateway" 
+                        onSelect={(r) => setSelectedRole(r)} 
+                        theme={primary} 
+                      />
+                    )}
                     {selectedRole && !activeModule && (
                       <div style={styles.verticalList}>
                         {roleData[selectedRole].modules.map(mod => (
-                          <div key={mod.id} onClick={() => setActiveModule(mod)} style={styles.clickableRowCard}>
-                             <div style={{...styles.iconBoxSmall, background: `${deepBlush}11`}}>{React.cloneElement(mod.icon, {size: 18, color: deepBlush})}</div>
-                             <div style={{flex:1}}><div style={styles.mTitle}>{mod.title}</div><div style={styles.mSub}>{mod.sub}</div></div>
-                             <ChevronRight size={18} color="#cbd5e1" />
+                          <div 
+                            key={mod.id} 
+                            onClick={() => setActiveModule(mod)} 
+                            style={{
+                              ...styles.clickableRowCard,
+                              padding: isMobile ? '14px 18px' : '18px 25px',
+                              borderRadius: isMobile ? '18px' : '25px'
+                            }}
+                          >
+                            <div style={{
+                              ...styles.iconBoxSmall, 
+                              background: `${primary}11`,
+                              width: isMobile ? '36px' : '40px',
+                              height: isMobile ? '36px' : '40px'
+                            }}>
+                              {React.cloneElement(mod.icon, {size: isMobile ? 16 : 18, color: primary})}
+                            </div>
+                            <div style={{flex: 1}}>
+                              <div style={{
+                                ...styles.mTitle,
+                                fontSize: isMobile ? '13px' : '15px'
+                              }}>
+                                {mod.title}
+                              </div>
+                              <div style={{
+                                ...styles.mSub,
+                                fontSize: isMobile ? '10px' : '12px'
+                              }}>
+                                {mod.sub}
+                              </div>
+                            </div>
+                            <ChevronRight size={isMobile ? 16 : 18} color="#cbd5e1" />
                           </div>
                         ))}
                       </div>
                     )}
-                    {activeModule && (<RenderModuleContent key="renderContent" module={activeModule} themeColor={deepBlush} />)}
+                    {activeModule && (
+                      <RenderModuleContent 
+                        key="renderContent" 
+                        module={activeModule} 
+                        themeColor={primary}
+                        isMobile={isMobile}
+                        isTablet={isTablet}
+                        isDesktop={isDesktop}
+                      />
+                    )}
                   </AnimatePresence>
-                  <div style={styles.vCard}>
-                    <Info size={16} color={deepBlush} />
-                    <span style={styles.vText}>ENGINE v1.2.6 • SECURE CONNECTION</span>
+                  <div style={{
+                    ...styles.vCard,
+                    marginTop: isMobile ? '25px' : '40px',
+                    padding: isMobile ? '12px' : '15px'
+                  }}>
+                    <Info size={isMobile ? 14 : 16} color={primary} />
+                    <span style={{
+                      ...styles.vText,
+                      fontSize: isMobile ? '9px' : '11px'
+                    }}>
+                      ENGINE v1.2.6 • SECURE CONNECTION
+                    </span>
                   </div>
                 </div>
               </motion.div>
@@ -249,53 +566,289 @@ function App() {
           </AnimatePresence>
         </div>
       </div>
-      <Footer />
+      <Footer isMobile={isMobile} isDesktop={isDesktop} />
     </div>
   );
 }
 
 const styles = {
-  appWrapper: { backgroundColor: '#FDF2F3', minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: "'Poppins', sans-serif" },
-  mainBody: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 0' },
-  mainContainer: { maxWidth: '850px', margin: '0 auto', width: '100%', padding: '0 20px' },
-  homeView: { textAlign: 'center' },
-  dashboardCard: { backgroundColor: '#ffffff', borderRadius: '35px', boxShadow: '0 30px 80px rgba(74, 29, 31, 0.1)', overflow: 'hidden', minHeight: '450px', margin: '20px auto 120px'},
-  cardHeader: { padding: '30px 40px', display: 'flex', alignItems: 'center', gap: '20px', borderBottom: '1px solid #FDF2F3' },
-  backCircle: { width: '45px', height: '45px', borderRadius: '15px', background: '#FDF2F3', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  sheetTitle: { fontSize: '20px', fontWeight: '800', color: '#4A1D1F', margin: 0 },
-  scrollArea: { padding: '25px 35px 100px 35px', overflowY: 'auto' }, 
-  verticalList: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  clickableRowCard: { background: '#FFF9F9', border: '1px solid #FDF2F3', borderRadius: '25px', padding: '18px 25px', display: 'flex', alignItems: 'center', gap: '20px', cursor: 'pointer', transition: '0.3s' },
-  iconBoxSmall: { width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  mTitle: { fontSize: '15px', fontWeight: '700', color: '#4A1D1F' },
-  mSub: { fontSize: '12px', color: '#94a3b8' },
-  vCard: { marginTop: '40px', padding: '15px', background: '#F9EFF0', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' },
-  vText: { color: '#7D5A5C', fontSize: '11px', fontWeight: '700' },
-  navScrollContainer: { display: 'flex', gap: '12px', overflowX: 'auto', padding: '0 5px 15px 5px', whiteSpace: 'nowrap', scrollbarWidth: 'none', marginBottom: '10px' },
-  navTab: { padding: '10px 20px', borderRadius: '20px', background: 'transparent', border: '1px solid transparent', color: '#7D5A5C', fontWeight: '600', cursor: 'pointer', transition: '0.2s', fontSize: '14px', display:'flex', alignItems:'center', gap:'8px', whiteSpace: 'nowrap' },
-  navTabActive: { padding: '10px 20px', borderRadius: '20px', background: '#F9EFF0', border: '1px solid #DD7A83', color: '#DD7A83', fontWeight: '700', cursor: 'pointer', transition: '0.2s', fontSize: '14px', display:'flex', alignItems:'center', gap:'8px', whiteSpace: 'nowrap' },
-  popularSection: { marginBottom: '25px', textAlign: 'left' },
-  sectionHeaderRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 5px', marginBottom: '15px' },
-  sectionTitleSmall: { fontSize: '16px', fontWeight: '800', color: '#4A1D1F', margin: 0 },
-  seeAllLink: { fontSize: '12px', fontWeight: '600', color: '#DD7A83', cursor: 'pointer' },
-  appScrollContainer: { display: 'flex', gap: '20px', overflowX: 'auto', padding: '5px 5px 15px 5px', scrollbarWidth: 'none', msOverflowStyle: 'none', scrollSnapType: 'x mandatory' },
-  appItem: { display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: '65px', cursor: 'pointer', scrollSnapAlign: 'start' },
-  appIconCircle: { width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px', color: '#fff', boxShadow: '0 5px 15px rgba(0,0,0,0.1)', border: '2px solid #fff' },
-  appName: { fontSize: '11px', fontWeight: '600', color: '#4A1D1F', textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '65px' },
-  bannerContainer: { position: 'relative', width: '100%', height: '240px', overflow: 'hidden', borderRadius: '25px', boxShadow: '0 15px 40px rgba(0,0,0,0.1)', marginBottom: '30px' },
-  bannerCard: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: '25px', padding: '30px', display: 'flex', flexDirection: 'column', justifyContent: 'center', color: '#fff' },
-  bannerContent: { position: 'relative', zIndex: 2, maxWidth: '60%' },
-  bannerTitle: { fontSize: '28px', fontWeight: '800', margin: '0 0 10px 0', lineHeight: 1.1 },
-  bannerDesc: { fontSize: '14px', opacity: 0.9, marginBottom: '20px' },
-  bannerBtn: { background: '#fff', color: '#000', border: 'none', padding: '10px 24px', borderRadius: '8px', fontWeight: '700', cursor: 'pointer' },
-  bannerIconBox: { marginBottom: '15px', opacity: 0.8 },
-  bannerDeco: { position: 'absolute', right: '-20px', bottom: '-40px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' },
-  indicatorContainer: { position: 'absolute', bottom: '20px', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '8px', zIndex: 10 },
-  indicatorDot: { width: '8px', height: '8px', borderRadius: '50%', cursor: 'pointer', transition: 'all 0.3s' },
-  quickAccessSection: { textAlign: 'left', marginTop: '20px' },
-  quickGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' },
-  quickCard: { background: '#fff', padding: '20px', borderRadius: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', boxShadow: '0 5px 20px rgba(0,0,0,0.03)', cursor: 'pointer', fontWeight: '600', fontSize: '13px', color: '#4A1D1F' },
-  sectionHeader: { fontSize: '14px', fontWeight: '800', color: '#4A1D1F', margin: '20px 0 10px 5px', textAlign: 'left', textTransform: 'uppercase' },
+  appWrapper: { 
+    minHeight: '100vh', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    fontFamily: "'Inter', 'Segoe UI', sans-serif"
+  },
+  mainBody: { 
+    flex: 1, 
+    display: 'flex', 
+    alignItems: 'flex-start', 
+    justifyContent: 'center'
+  },
+  mainContainer: { 
+    width: '100%', 
+    margin: '0 auto'
+  },
+  homeView: { 
+    textAlign: 'center' 
+  },
+  dashboardCard: { 
+    backgroundColor: '#ffffff', 
+    boxShadow: '0 25px 80px rgba(0, 0, 0, 0.08)', 
+    overflow: 'hidden', 
+    minHeight: '450px'
+  },
+  cardHeader: { 
+    display: 'flex', 
+    alignItems: 'center', 
+    borderBottom: '1px solid #F1F5F9' 
+  },
+  backCircle: { 
+    borderRadius: '12px', 
+    background: '#F1F5F9', 
+    border: 'none', 
+    cursor: 'pointer', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center' 
+  },
+  sheetTitle: { 
+    fontSize: '20px', 
+    fontWeight: '800', 
+    color: '#1E293B', 
+    margin: 0 
+  },
+  scrollArea: { 
+    overflowY: 'auto' 
+  }, 
+  verticalList: { 
+    display: 'flex', 
+    flexDirection: 'column', 
+    gap: '12px' 
+  },
+  clickableRowCard: { 
+    background: '#F8FAFC', 
+    border: '1px solid #E2E8F0', 
+    display: 'flex', 
+    alignItems: 'center', 
+    gap: '20px', 
+    cursor: 'pointer', 
+    transition: '0.3s' 
+  },
+  iconBoxSmall: { 
+    borderRadius: '12px', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center' 
+  },
+  mTitle: { 
+    fontWeight: '700', 
+    color: '#1E293B' 
+  },
+  mSub: { 
+    color: '#94a3b8' 
+  },
+  vCard: { 
+    padding: '15px', 
+    background: '#F1F5F9', 
+    borderRadius: '16px', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    gap: '10px' 
+  },
+  vText: { 
+    color: '#64748B', 
+    fontWeight: '700' 
+  },
+  navScrollContainer: { 
+    display: 'flex', 
+    gap: '12px', 
+    overflowX: 'auto', 
+    padding: '0 5px 15px 5px', 
+    whiteSpace: 'nowrap', 
+    scrollbarWidth: 'none', 
+    marginBottom: '20px' 
+  },
+  navTab: { 
+    padding: '10px 24px', 
+    borderRadius: '20px', 
+    background: 'transparent', 
+    border: '1px solid transparent', 
+    color: '#64748B', 
+    fontWeight: '600', 
+    cursor: 'pointer', 
+    transition: '0.2s', 
+    display: 'flex', 
+    alignItems: 'center', 
+    gap: '8px', 
+    whiteSpace: 'nowrap',
+    fontFamily: 'inherit'
+  },
+  navTabActive: { 
+    padding: '10px 24px', 
+    borderRadius: '20px', 
+    background: '#6366F1', 
+    border: '1px solid #6366F1', 
+    color: '#ffffff', 
+    fontWeight: '700', 
+    cursor: 'pointer', 
+    transition: '0.2s', 
+    display: 'flex', 
+    alignItems: 'center', 
+    gap: '8px', 
+    whiteSpace: 'nowrap',
+    fontFamily: 'inherit'
+  },
+  popularSection: { 
+    marginBottom: '30px', 
+    textAlign: 'left' 
+  },
+  sectionHeaderRow: { 
+    display: 'flex', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    padding: '0 5px', 
+    marginBottom: '15px' 
+  },
+  sectionTitleSmall: { 
+    fontSize: '18px', 
+    fontWeight: '800', 
+    color: '#1E293B', 
+    margin: 0 
+  },
+  seeAllLink: { 
+    fontSize: '13px', 
+    fontWeight: '600', 
+    color: '#6366F1', 
+    cursor: 'pointer' 
+  },
+  appScrollContainer: { 
+    display: 'flex', 
+    gap: '20px', 
+    overflowX: 'auto', 
+    padding: '5px 5px 15px 5px', 
+    scrollbarWidth: 'none', 
+    msOverflowStyle: 'none', 
+    scrollSnapType: 'x mandatory' 
+  },
+  appItem: { 
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center', 
+    cursor: 'pointer', 
+    scrollSnapAlign: 'start' 
+  },
+  appIconCircle: { 
+    borderRadius: '50%', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    marginBottom: '8px', 
+    color: '#fff', 
+    boxShadow: '0 8px 20px rgba(0,0,0,0.15)', 
+    border: '3px solid #fff' 
+  },
+  appName: { 
+    fontWeight: '600', 
+    color: '#1E293B', 
+    textAlign: 'center', 
+    whiteSpace: 'nowrap', 
+    overflow: 'hidden', 
+    textOverflow: 'ellipsis' 
+  },
+  bannerContainer: { 
+    position: 'relative', 
+    width: '100%', 
+    overflow: 'hidden', 
+    boxShadow: '0 20px 60px rgba(0,0,0,0.12)', 
+    marginBottom: '30px' 
+  },
+  bannerCard: { 
+    position: 'absolute', 
+    top: 0, 
+    left: 0, 
+    width: '100%', 
+    height: '100%', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    justifyContent: 'center', 
+    color: '#fff' 
+  },
+  bannerContent: { 
+    position: 'relative', 
+    zIndex: 2 
+  },
+  bannerTitle: { 
+    fontWeight: '800', 
+    margin: '0 0 10px 0', 
+    lineHeight: 1.1 
+  },
+  bannerDesc: { 
+    opacity: 0.9, 
+    marginBottom: '20px' 
+  },
+  bannerBtn: { 
+    background: '#fff', 
+    color: '#000', 
+    border: 'none', 
+    borderRadius: '10px', 
+    fontWeight: '700', 
+    cursor: 'pointer' 
+  },
+  bannerIconBox: { 
+    marginBottom: '15px', 
+    opacity: 0.8 
+  },
+  bannerDeco: { 
+    position: 'absolute', 
+    right: '-20px', 
+    bottom: '-40px', 
+    borderRadius: '50%', 
+    background: 'rgba(255,255,255,0.1)' 
+  },
+  indicatorContainer: { 
+    position: 'absolute', 
+    bottom: '20px', 
+    left: '0', 
+    right: '0', 
+    display: 'flex', 
+    justifyContent: 'center', 
+    gap: '8px', 
+    zIndex: 10 
+  },
+  indicatorDot: { 
+    borderRadius: '50%', 
+    cursor: 'pointer', 
+    transition: 'all 0.3s' 
+  },
+  quickAccessSection: { 
+    textAlign: 'left', 
+    marginTop: '20px' 
+  },
+  quickGrid: { 
+    display: 'grid',
+    gap: '15px' 
+  },
+  quickCard: { 
+    background: '#fff', 
+    borderRadius: '20px', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center', 
+    gap: '10px', 
+    boxShadow: '0 4px 20px rgba(0,0,0,0.04)', 
+    cursor: 'pointer', 
+    fontWeight: '600', 
+    color: '#1E293B',
+    border: '1px solid #E2E8F0',
+    transition: '0.3s'
+  },
+  sectionHeader: { 
+    fontWeight: '800', 
+    color: '#1E293B', 
+    margin: '20px 0 15px 5px', 
+    textTransform: 'uppercase' 
+  },
 };
 
 export default App;

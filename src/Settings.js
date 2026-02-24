@@ -13,13 +13,29 @@ import {
   Play, Pause, Edit, Trash, MoreVertical, Menu, LogOut, UserCheck, UserPlus, DollarCircle,
   PieChart as PieChartIcon, BarChart as BarChartIcon, ArrowUpRight, ArrowDownRight,
   Clock3, Calendar, MapPin, Phone, AtSign, ShieldAlert, Grid, Compass, Award, Smartphone as MobileIcon, Layers,
-  Headphones, ShoppingBag, Music, Gamepad2, Rocket
+  Headphones, ShoppingBag, Music, Gamepad2, Rocket, CheckCircle as CheckIcon
 } from 'lucide-react';
 
 import Mainlogo from './assets/Mainlogo.png';
 
+// Modern color palette
+const colors = {
+  primary: '#6366F1',
+  primaryLight: '#818CF8',
+  primaryDark: '#4F46E5',
+  accent: '#EC4899',
+  success: '#10B981',
+  warning: '#F59E0B',
+  danger: '#EF4444',
+  dark: '#1E293B',
+  gray: '#64748B',
+  lightGray: '#E2E8F0',
+  lightest: '#F8FAFC',
+  white: '#FFFFFF'
+};
+
 // --- PUBLISH WEBSITE FORM COMPONENT ---
-const PublishWebsiteForm = ({ themeColor }) => {
+const PublishWebsiteForm = ({ themeColor, isMobile }) => {
   const [formData, setFormData] = useState({
     websiteUrl: '',
     shortName: '',
@@ -91,8 +107,10 @@ const PublishWebsiteForm = ({ themeColor }) => {
             key={step}
             style={{
               ...publishStyles.stepItem,
-              background: currentStep >= step ? themeColor : '#e5e5e5',
-              color: currentStep >= step ? '#fff' : '#999'
+              background: currentStep >= step ? themeColor : colors.lightGray,
+              color: currentStep >= step ? '#fff' : colors.gray,
+              width: isMobile ? '28px' : '32px',
+              height: isMobile ? '28px' : '32px',
             }}
             onClick={() => setCurrentStep(step)}
             whileHover={{ scale: 1.05 }}
@@ -103,10 +121,13 @@ const PublishWebsiteForm = ({ themeColor }) => {
         ))}
       </div>
 
-      <div style={publishStyles.stepLabels}>
-        <span style={{ color: currentStep >= 1 ? themeColor : '#999' }}>Website Info</span>
-        <span style={{ color: currentStep >= 2 ? themeColor : '#999' }}>Owner Details</span>
-        <span style={{ color: currentStep >= 3 ? themeColor : '#999' }}>Publish</span>
+      <div style={{
+        ...publishStyles.stepLabels,
+        fontSize: isMobile ? '10px' : '12px'
+      }}>
+        <span style={{ color: currentStep >= 1 ? themeColor : colors.gray }}>Website Info</span>
+        <span style={{ color: currentStep >= 2 ? themeColor : colors.gray }}>Owner Details</span>
+        <span style={{ color: currentStep >= 3 ? themeColor : colors.gray }}>Publish</span>
       </div>
 
       {/* Step 1: Website Information */}
@@ -120,7 +141,7 @@ const PublishWebsiteForm = ({ themeColor }) => {
           </div>
 
           <motion.div style={publishStyles.inputGroup} whileFocus={{ scale: 1.01 }}>
-            <label style={publishStyles.inputLabel}>Website URL <span style={{color: '#ff4444'}}>*</span></label>
+            <label style={publishStyles.inputLabel}>Website URL <span style={{color: colors.danger}}>*</span></label>
             <div style={publishStyles.inputWrapper}>
               <Link size={16} color={themeColor} />
               <input style={publishStyles.formInput} name="websiteUrl" value={formData.websiteUrl} onChange={handleInputChange} placeholder="https://www.yourwebsite.com" />
@@ -128,7 +149,7 @@ const PublishWebsiteForm = ({ themeColor }) => {
           </motion.div>
 
           <motion.div style={publishStyles.inputGroup} whileFocus={{ scale: 1.01 }}>
-            <label style={publishStyles.inputLabel}>Website Short Name <span style={{color: '#ff4444'}}>*</span></label>
+            <label style={publishStyles.inputLabel}>Website Short Name <span style={{color: colors.danger}}>*</span></label>
             <div style={publishStyles.inputWrapper}>
               <Edit3 size={16} color={themeColor} />
               <input style={publishStyles.formInput} name="shortName" value={formData.shortName} onChange={handleInputChange} placeholder="MyApp" />
@@ -136,7 +157,7 @@ const PublishWebsiteForm = ({ themeColor }) => {
           </motion.div>
 
           <motion.div style={publishStyles.inputGroup} whileFocus={{ scale: 1.01 }}>
-            <label style={publishStyles.inputLabel}>Website Type <span style={{color: '#ff4444'}}>*</span></label>
+            <label style={publishStyles.inputLabel}>Website Type <span style={{color: colors.danger}}>*</span></label>
             <div style={publishStyles.selectWrapper}>
               <LayoutGrid size={16} color={themeColor} />
               <select style={publishStyles.formSelect} name="websiteType" value={formData.websiteType} onChange={handleInputChange}>
@@ -147,59 +168,11 @@ const PublishWebsiteForm = ({ themeColor }) => {
           </motion.div>
 
           <motion.div style={publishStyles.inputGroup} whileFocus={{ scale: 1.01 }}>
-            <label style={publishStyles.inputLabel}>Developer ID <span style={{color: '#ff4444'}}>*</span></label>
+            <label style={publishStyles.inputLabel}>Developer ID <span style={{color: colors.danger}}>*</span></label>
             <div style={publishStyles.inputWrapper}>
               <Code size={16} color={themeColor} />
               <input style={publishStyles.formInput} name="developerId" value={formData.developerId} onChange={handleInputChange} placeholder="DEV-XXXX-XXXX" />
             </div>
-          </motion.div>
-
-          {/* Logo Upload */}
-          <motion.div style={publishStyles.uploadSection} whileHover={{ scale: 1.01 }}>
-            <label style={publishStyles.inputLabel}>Website Logo <span style={{color: '#ff4444'}}>*</span></label>
-            <div style={publishStyles.logoUploadArea}>
-              {formData.logo ? (
-                <div style={publishStyles.logoPreview}>
-                  <img src={formData.logo} alt="Logo" style={publishStyles.logoImage} />
-                  <div style={publishStyles.removeLogoBtn} onClick={() => setFormData(prev => ({ ...prev, logo: null }))}>
-                    <X size={14} color="#fff" />
-                  </div>
-                </div>
-              ) : (
-                <label style={publishStyles.uploadLabel}>
-                  <input type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: 'none' }} />
-                  <Camera size={24} color={themeColor} />
-                  <span>Click to upload logo</span>
-                  <small>PNG, JPG (Max 2MB)</small>
-                </label>
-              )}
-            </div>
-          </motion.div>
-
-          {/* Screenshots Upload */}
-          <motion.div style={publishStyles.uploadSection} whileHover={{ scale: 1.01 }}>
-            <label style={publishStyles.inputLabel}>Website Screenshots <span style={{color: '#999'}}>(Max 5)</span></label>
-            <div style={publishStyles.screenshotsGrid}>
-              {formData.screenshots.map((shot, index) => (
-                <motion.div key={index} style={publishStyles.screenshotItem} initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                  <img src={shot} alt={`Screenshot ${index + 1}`} style={publishStyles.screenshotImage} />
-                  <div style={publishStyles.removeScreenshotBtn} onClick={() => removeScreenshot(index)}>
-                    <X size={12} color="#fff" />
-                  </div>
-                </motion.div>
-              ))}
-              {formData.screenshots.length < 5 && (
-                <label style={publishStyles.addScreenshotBtn}>
-                  <input type="file" accept="image/*" multiple onChange={handleScreenshotUpload} style={{ display: 'none' }} />
-                  <Plus size={20} color={themeColor} />
-                </label>
-              )}
-            </div>
-          </motion.div>
-
-          <motion.div style={publishStyles.inputGroup} whileFocus={{ scale: 1.01 }}>
-            <label style={publishStyles.inputLabel}>Description</label>
-            <textarea style={publishStyles.formTextarea} name="description" value={formData.description} onChange={handleInputChange} placeholder="Describe your website..." rows={4} />
           </motion.div>
 
           <motion.button 
@@ -222,48 +195,31 @@ const PublishWebsiteForm = ({ themeColor }) => {
 
           <div style={publishStyles.twoColumnGrid}>
             <motion.div style={publishStyles.inputGroup} whileFocus={{ scale: 1.01 }}>
-              <label style={publishStyles.inputLabel}>Owner Name <span style={{color: '#ff4444'}}>*</span></label>
+              <label style={publishStyles.inputLabel}>Owner Name <span style={{color: colors.danger}}>*</span></label>
               <div style={publishStyles.inputWrapper}>
                 <User size={16} color={themeColor} />
                 <input style={publishStyles.formInput} name="ownerName" value={formData.ownerName} onChange={handleInputChange} placeholder="Full Name" />
               </div>
             </motion.div>
             <motion.div style={publishStyles.inputGroup} whileFocus={{ scale: 1.01 }}>
-              <label style={publishStyles.inputLabel}>Aadhar Number <span style={{color: '#ff4444'}}>*</span></label>
-              <div style={publishStyles.inputWrapper}>
-                <CreditCard size={16} color={themeColor} />
-                <input style={publishStyles.formInput} name="adharNumber" value={formData.adharNumber} onChange={handleInputChange} placeholder="XXXX XXXX XXXX XXXX" maxLength={16} />
-              </div>
-            </motion.div>
-          </div>
-
-          <div style={publishStyles.twoColumnGrid}>
-            <motion.div style={publishStyles.inputGroup} whileFocus={{ scale: 1.01 }}>
-              <label style={publishStyles.inputLabel}>Mobile Number <span style={{color: '#ff4444'}}>*</span></label>
+              <label style={publishStyles.inputLabel}>Mobile Number <span style={{color: colors.danger}}>*</span></label>
               <div style={publishStyles.inputWrapper}>
                 <Phone size={16} color={themeColor} />
                 <input style={publishStyles.formInput} name="mobileNumber" value={formData.mobileNumber} onChange={handleInputChange} placeholder="+91 XXXXX XXXXX" type="tel" />
-              </div>
-            </motion.div>
-            <motion.div style={publishStyles.inputGroup} whileFocus={{ scale: 1.01 }}>
-              <label style={publishStyles.inputLabel}>Gmail ID <span style={{color: '#ff4444'}}>*</span></label>
-              <div style={publishStyles.inputWrapper}>
-                <Mail size={16} color={themeColor} />
-                <input style={publishStyles.formInput} name="gmailId" value={formData.gmailId} onChange={handleInputChange} placeholder="yourname@gmail.com" type="email" />
               </div>
             </motion.div>
           </div>
 
           <div style={publishStyles.ownerInfoNote}>
             <ShieldCheck size={16} color={themeColor} />
-            <span>Your information is secure and encrypted as per government regulations.</span>
+            <span>Your information is secure and encrypted.</span>
           </div>
 
           <div style={publishStyles.buttonGroup}>
             <motion.button style={publishStyles.backBtn} onClick={() => setCurrentStep(1)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <ArrowLeft size={18} /> Back
             </motion.button>
-            <motion.button style={{...publishStyles.nextBtn, background: themeColor}} onClick={() => setCurrentStep(3)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={!formData.ownerName || !formData.adharNumber || !formData.mobileNumber || !formData.gmailId}>
+            <motion.button style={{...publishStyles.nextBtn, background: themeColor}} onClick={() => setCurrentStep(3)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={!formData.ownerName || !formData.mobileNumber}>
               Next: Publish <ChevronRight size={18} />
             </motion.button>
           </div>
@@ -278,35 +234,9 @@ const PublishWebsiteForm = ({ themeColor }) => {
             <h3 style={publishStyles.formSectionTitle}>Review & Publish</h3>
           </div>
 
-          <motion.div style={publishStyles.summaryCard} initial={{ scale: 0.95 }} animate={{ scale: 1 }}>
-            <div style={publishStyles.summaryHeader}>
-              {formData.logo && <img src={formData.logo} alt="Logo" style={publishStyles.summaryLogo} />}
-              <div>
-                <h4 style={publishStyles.summaryTitle}>{formData.shortName || 'Your Website'}</h4>
-                <p style={publishStyles.summaryUrl}>{formData.websiteUrl}</p>
-              </div>
-            </div>
-            <div style={publishStyles.summaryDetails}>
-              <div style={publishStyles.summaryRow}><span>Website Type</span><b>{formData.websiteType}</b></div>
-              <div style={publishStyles.summaryRow}><span>Developer ID</span><b>{formData.developerId}</b></div>
-              <div style={publishStyles.summaryRow}><span>Owner</span><b>{formData.ownerName}</b></div>
-              <div style={publishStyles.summaryRow}><span>Contact</span><b>{formData.mobileNumber}</b></div>
-            </div>
-          </motion.div>
-
-          <motion.div style={publishStyles.paymentCard} initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-            <div style={publishStyles.paymentHeader}><CreditCard size={24} color={themeColor} /><h4>Publishing Fee</h4></div>
-            <div style={publishStyles.pricingRow}>
-              <div style={publishStyles.pricingItem}><span>Platform Fee</span><b>$9.99</b></div>
-              <div style={publishStyles.pricingItem}><span>SSL Certificate</span><b>Free</b></div>
-              <div style={publishStyles.pricingItem}><span>Hosting (1 year)</span><b>$24.99</b></div>
-            </div>
-            <div style={publishStyles.totalRow}><span>Total</span><b style={{ color: themeColor, fontSize: '24px' }}>$34.98</b></div>
-            <motion.button style={{...publishStyles.payBtn, background: themeColor}} onClick={handleSubmit} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={isSubmitting}>
-              {isSubmitting ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} style={publishStyles.spinner} /> : (<><Wallet size={18} /> Pay & Publish Website</>)}
-            </motion.button>
-            <p style={publishStyles.paymentNote}><Lock size={12} /> Secure payment powered by Web Global Guru</p>
-          </motion.div>
+          <motion.button style={{...publishStyles.payBtn, background: themeColor}} onClick={handleSubmit} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={isSubmitting}>
+            {isSubmitting ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }} style={publishStyles.spinner} /> : (<><Wallet size={18} /> Pay & Publish Website</>)}
+          </motion.button>
 
           <div style={publishStyles.buttonGroup}>
             <motion.button style={publishStyles.backBtn} onClick={() => setCurrentStep(2)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -319,95 +249,287 @@ const PublishWebsiteForm = ({ themeColor }) => {
   );
 };
 
-// --- PUBLISH WEBSITE FORM STYLES (Pink & White Theme) ---
+// --- PUBLISH WEBSITE FORM STYLES ---
 const publishStyles = {
   container: { padding: '0 5px' },
   stepIndicator: { display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '8px' },
-  stepItem: { width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '700', cursor: 'pointer', transition: '0.3s' },
-  stepLabels: { display: 'flex', justifyContent: 'space-between', padding: '0 20px', marginBottom: '25px', fontSize: '12px', fontWeight: '600' },
-  formSection: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '10px', borderBottom: '2px solid #FFCCD5' },
-  sectionIconBox: { width: '40px', height: '40px', borderRadius: '12px', background: '#FFE4E8', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  formSectionTitle: { fontSize: '18px', fontWeight: '800', color: '#E91E63', margin: 0 },
+  stepItem: { borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '700', cursor: 'pointer', transition: '0.3s' },
+  stepLabels: { display: 'flex', justifyContent: 'space-between', padding: '0 20px', marginBottom: '25px', fontWeight: '600' },
+  formSection: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '10px', borderBottom: `2px solid ${colors.lightGray}` },
+  sectionIconBox: { width: '40px', height: '40px', borderRadius: '12px', background: `${colors.primary}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  formSectionTitle: { fontSize: '18px', fontWeight: '800', color: colors.dark, margin: 0 },
   inputGroup: { marginBottom: '16px' },
-  inputLabel: { display: 'block', fontSize: '13px', fontWeight: '700', color: '#E91E63', marginBottom: '8px' },
-  inputWrapper: { display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', border: '2px solid #FFCCD5', borderRadius: '12px', padding: '0 14px', transition: '0.3s', boxShadow: 'inset 0 1px 3px rgba(233,30,99,0.05)' },
-  selectWrapper: { display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', border: '2px solid #FFCCD5', borderRadius: '12px', padding: '0 14px' },
-  formInput: { flex: 1, padding: '14px 0', border: 'none', outline: 'none', fontSize: '14px', color: '#333', fontFamily: 'inherit', background: 'transparent' },
-  formSelect: { flex: 1, padding: '14px 0', border: 'none', outline: 'none', fontSize: '14px', color: '#333', fontFamily: 'inherit', background: 'transparent', cursor: 'pointer' },
-  formTextarea: { width: '100%', padding: '14px', border: '2px solid #FFCCD5', borderRadius: '12px', fontSize: '14px', color: '#333', fontFamily: 'inherit', resize: 'vertical', outline: 'none', boxSizing: 'border-box', background: '#fff' },
-  uploadSection: { marginBottom: '16px' },
-  logoUploadArea: { border: '2px dashed #E91E63', borderRadius: '16px', padding: '25px', textAlign: 'center', cursor: 'pointer', transition: '0.3s', background: '#FFF0F3' },
-  uploadLabel: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', color: '#E91E63' },
-  logoPreview: { position: 'relative', display: 'inline-block' },
-  logoImage: { width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover', border: '2px solid #E91E63' },
-  removeLogoBtn: { position: 'absolute', top: '-8px', right: '-8px', width: '24px', height: '24px', borderRadius: '50%', background: '#E91E63', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' },
-  screenshotsGrid: { display: 'flex', gap: '10px', flexWrap: 'wrap' },
-  screenshotItem: { position: 'relative', width: '70px', height: '70px', borderRadius: '10px', overflow: 'hidden', border: '2px solid #FFCCD5' },
-  screenshotImage: { width: '100%', height: '100%', objectFit: 'cover' },
-  removeScreenshotBtn: { position: 'absolute', top: '2px', right: '2px', width: '18px', height: '18px', borderRadius: '50%', background: '#E91E63', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' },
-  addScreenshotBtn: { width: '70px', height: '70px', borderRadius: '10px', border: '2px dashed #E91E63', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: '#FFF0F3' },
+  inputLabel: { display: 'block', fontSize: '13px', fontWeight: '700', color: colors.dark, marginBottom: '8px' },
+  inputWrapper: { display: 'flex', alignItems: 'center', gap: '10px', background: colors.white, border: `2px solid ${colors.lightGray}`, borderRadius: '12px', padding: '0 14px', transition: '0.3s' },
+  selectWrapper: { display: 'flex', alignItems: 'center', gap: '10px', background: colors.white, border: `2px solid ${colors.lightGray}`, borderRadius: '12px', padding: '0 14px' },
+  formInput: { flex: 1, padding: '14px 0', border: 'none', outline: 'none', fontSize: '14px', color: colors.dark, fontFamily: 'inherit', background: 'transparent' },
+  formSelect: { flex: 1, padding: '14px 0', border: 'none', outline: 'none', fontSize: '14px', color: colors.dark, fontFamily: 'inherit', background: 'transparent', cursor: 'pointer' },
   twoColumnGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' },
-  ownerInfoNote: { display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#FFE4E8', borderRadius: '10px', fontSize: '12px', color: '#E91E63', marginTop: '15px' },
+  ownerInfoNote: { display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: `${colors.primary}12`, borderRadius: '10px', fontSize: '12px', color: colors.primary, marginTop: '15px' },
   buttonGroup: { display: 'flex', gap: '12px', marginTop: '25px' },
-  backBtn: { flex: 1, padding: '14px', borderRadius: '12px', border: '2px solid #E91E63', background: '#fff', color: '#E91E63', fontWeight: '700', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: '0.3s' },
-  nextBtn: { flex: 1, padding: '14px', borderRadius: '12px', border: 'none', color: '#fff', fontWeight: '700', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: '0.3s', boxShadow: '0 4px 10px rgba(233,30,99,0.3)' },
-  summaryCard: { background: '#fff', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 4px 20px rgba(233,30,99,0.1)', border: '1px solid #FFCCD5' },
-  summaryHeader: { display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px', paddingBottom: '15px', borderBottom: '2px solid #FFEEF0' },
-  summaryLogo: { width: '50px', height: '50px', borderRadius: '10px', objectFit: 'cover', border: '2px solid #E91E63' },
-  summaryTitle: { fontSize: '16px', fontWeight: '800', color: '#E91E63', margin: '0 0 4px 0' },
-  summaryUrl: { fontSize: '12px', color: '#E91E63', margin: 0, opacity: 0.8 },
-  summaryDetails: { marginBottom: '10px' },
-  summaryRow: { display: 'flex', justifyContent: 'space-between', padding: '8px 0', fontSize: '13px', color: '#666', borderBottom: '1px solid #FFEEF0' },
-  paymentCard: { background: '#fff', borderRadius: '16px', padding: '20px', marginBottom: '20px', boxShadow: '0 4px 20px rgba(233,30,99,0.15)', border: '2px solid #E91E63' },
-  paymentHeader: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px', paddingBottom: '15px', borderBottom: '2px solid #FFEEF0' },
-  pricingRow: { marginBottom: '15px' },
-  pricingItem: { display: 'flex', justifyContent: 'space-between', padding: '10px 0', fontSize: '14px', color: '#666', borderBottom: '1px solid #FFEEF0' },
-  totalRow: { display: 'flex', justifyContent: 'space-between', padding: '15px 0', marginBottom: '20px', borderTop: '2px solid #E91E63', fontSize: '16px', fontWeight: '800', color: '#E91E63' },
-  payBtn: { width: '100%', padding: '16px', borderRadius: '12px', border: 'none', color: '#fff', fontWeight: '700', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: '0.3s', boxShadow: '0 4px 15px rgba(233,30,99,0.4)' },
+  backBtn: { flex: 1, padding: '14px', borderRadius: '12px', border: `2px solid ${colors.primary}`, background: colors.white, color: colors.primary, fontWeight: '700', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: '0.3s' },
+  nextBtn: { flex: 1, padding: '14px', borderRadius: '12px', border: 'none', color: colors.white, fontWeight: '700', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: '0.3s', boxShadow: `0 4px 15px ${colors.primary}40` },
+  payBtn: { width: '100%', padding: '16px', borderRadius: '12px', border: 'none', color: colors.white, fontWeight: '700', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', transition: '0.3s', boxShadow: `0 4px 20px ${colors.primary}50` },
   spinner: { width: '20px', height: '20px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%' },
-  paymentNote: { textAlign: 'center', fontSize: '11px', color: '#E91E63', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', opacity: 0.7 },
 };
 
 // --- MEGA RENDERER ENGINE ---
-export const RenderModuleContent = ({ module, themeColor }) => {
+export const RenderModuleContent = ({ module, themeColor, isMobile, isTablet, isDesktop }) => {
   const [activeTab, setActiveTab] = useState('sites');
 
+  const cardPadding = isMobile ? '12px' : '18px';
+  const titleSize = isMobile ? '14px' : '16px';
+
   switch(module.id) {
-    case 'u_profile': return (<div style={s.deepPage}><div style={s.profileUpload}><Camera size={24} color={themeColor}/></div><input style={s.input} placeholder="Full Name" /><input style={s.input} placeholder="Email" /><ActionRow icon={<Lock/>} label="Change Master Password" /><ActionRow icon={<ShieldCheck/>} label="Two-Factor Authentication" isToggle /><button style={s.dangerBtn}>Deactivate Account</button></div>);
-    case 'u_history': return (<div style={s.deepPage}><div style={s.tabHeader}><button style={activeTab === 'sites' ? s.tabOn : s.tabOff} onClick={()=>setActiveTab('sites')}>Recently Viewed</button><button style={activeTab === 'search' ? s.tabOn : s.tabOff} onClick={()=>setActiveTab('search')}>Search History</button></div>{activeTab === 'sites' ? (<div style={s.listArea}><div style={s.historyCard}><div style={s.siteThumb}><img src={Mainlogo} width="24" alt="logo"/></div><div style={{flex:1}}><b>Global Web Guru</b><p>E-Commerce • Today 10:20 AM</p></div><button style={s.miniBtn}>Visit Again</button><Trash2 size={16} color="#ddd"/></div><div style={s.sectionHeader}>Clear History Options</div><div style={s.btnRow}><button style={s.outlineBtn}>Last 24h</button><button style={s.outlineBtn}>Last 7 Days</button><button style={s.clearBtnFull}>Clear All</button></div></div>) : (<div style={s.listArea}><div style={s.searchLogItem}><Search size={14}/> <span>React Infrastructure Templates</span> <small>Today</small></div><button style={s.clearBtnFull}>Clear All Search Logs</button></div>)}<div style={s.advancedBox}><ActionRow icon={<RotateCw/>} label="Auto delete after 30 days" isToggle /><ActionRow icon={<Clock/>} label="Pause Tracking" isToggle /></div></div>);
-    case 'u_saved': return (<div style={s.deepPage}><div style={s.folderGrid}><div style={s.folder}><Heart fill={themeColor} color={themeColor}/> Favorites</div><div style={s.folder}><Briefcase color={themeColor}/> Work</div><div style={s.folder}><PlusCircle color="#999"/> New Category</div></div><div style={s.historyCard}><div style={{flex:1}}><b>React-Silk-UI.com</b><p>Category: Dev Tools</p></div><ExternalLink size={18} color={themeColor}/></div><div style={s.sectionHeader}>Share & Export</div><div style={s.btnRow}><button style={s.outlineBtn}><Share2 size={14}/> Share via Link</button><button style={s.outlineBtn}><Download size={14}/> Export (PDF)</button></div></div>);
-    case 'u_notify': return (<div style={s.deepPage}><div style={s.notifyCard}><div style={s.pulseDot}></div><div style={{flex:1}}><b>Website Approved</b><p>Infrastructure deployment successful.</p></div><Check size={16} color="#10b981"/></div><div style={s.sectionHeader}>System Alert Controls</div><ActionRow icon={<BadgeCheck/>} label="Approval Alerts" isToggle /><ActionRow icon={<RotateCw/>} label="Renewal Reminders" isToggle /><ActionRow icon={<Zap/>} label="Ads Performance alert" isToggle /><div style={s.sectionHeader}>Channel Settings</div><ActionRow icon={<Globe/>} label="Email Notifications" isToggle /><ActionRow icon={<Smartphone/>} label="App Push Notifications" isToggle /><button style={s.clearBtnFull}>Clear All Notifications</button></div>);
-    case 'u_refer': case 'd_refer': case 'c_refer': return (<div style={s.deepPage}><div style={s.walletCard}><p>Withdrawable Balance</p><h1>$124.50</h1><div style={s.linkCopy}><span>wgg.io/ref/USER7X2</span> <Copy size={16} /></div></div><div style={s.statGrid}><div style={s.statCard}><h4>24</h4><p>Total Ref</p></div><div style={s.statCard}><h4>18</h4><p>Active</p></div></div><div style={s.sectionHeader}>Withdrawal Banking</div><input style={s.input} placeholder="Bank Name / IFSC" /><input style={s.input} placeholder="Account Number" /><button style={{...s.mainBtnFull, background: themeColor}}>Request Withdraw</button></div>);
-    case 'u_feed': case 'd_feed': return (<div style={s.deepPage}><div style={s.ratingRow}>{[1,2,3,4,5].map(i => <Star key={i} size={30} color={i <= 4 ? "#FFD700" : "#ddd"} fill={i <= 4 ? "#FFD700" : "none"} />)}</div><select style={s.input}><option>Select Category</option><option>Bug Report</option><option>Suggestion</option><option>Feature Request</option></select><textarea style={s.inputArea} placeholder="How can we improve?"></textarea><div style={s.uploadBox}><Image size={20}/> Attach Screenshot</div><button style={{...s.mainBtnFull, background: themeColor}}>Submit Feedback</button></div>);
-    case 'd_profile': return (<div style={s.deepPage}><div style={s.sectionHeader}>Developer Identity</div><div style={s.profileHeader}><div style={s.profileUpload}><Terminal size={30} color={themeColor}/></div><div><h3 style={{margin: 0}}>John Doe</h3><p style={{margin: 0, color: '#666', fontSize: '12px'}}>Verified Developer at Web Global Guru</p></div></div><input style={s.input} placeholder="Full Name" defaultValue="John Doe" /><div style={s.inputRow}><input style={{...s.input, flex:1}} placeholder="Email" defaultValue="john@example.com" /><input style={{...s.input, flex:1}} placeholder="Phone" /></div><textarea style={s.inputArea} placeholder="Short Bio"></textarea><div style={s.statGrid}><input style={s.input} placeholder="Exp (Years)" /><input style={s.input} placeholder="Tech Stack" /></div><div style={s.inputRow}><input style={{...s.input, flex:1}} placeholder="GitHub Link" /><input style={{...s.input, flex:1}} placeholder="Portfolio Link" /></div><div style={s.sectionHeader}>Verification</div><div style={s.uploadBox}><UploadCloud size={20}/> ID Proof / Company Docs</div><div style={s.statusBanner}><CheckCircle size={16}/> Account Status: <b>VERIFIED</b></div><button style={{...s.mainBtnFull, background:themeColor, marginTop:'15px'}}>Save Profile</button></div>);
-    case 'd_publish': return <PublishWebsiteForm themeColor={themeColor} />;
-    case 'd_buy_domain': return (<div style={s.deepPage}><div style={s.sectionHeader}>Buy Global Domain</div><div style={s.searchContainer}><Search size={18} color="#666"/><input style={s.searchInput} placeholder="Search domain (e.g. myapp.com)" /><button style={s.searchBtn}>Search</button></div><div style={s.sectionHeader}>Available Domains</div><div style={s.tableCard}><div style={s.tableRow}><div><b>myapp.com</b><p style={{color:'green', fontSize:'12px'}}>Available</p></div><button style={s.buyBtn}>$12.99 / yr</button></div><div style={s.tableRow}><div><b>myapp.net</b><p style={{color:'green', fontSize:'12px'}}>Available</p></div><button style={s.buyBtn}>$10.99 / yr</button></div><div style={s.tableRow}><div><b>myapp.io</b><p style={{color:'red', fontSize:'12px'}}>Taken</p></div><button style={{...s.buyBtn, background:'#ccc', color:'#666'}} disabled>Unavailable</button></div></div></div>);
-    case 'd_buy_ssl': return (<div style={s.deepPage}><div style={s.sectionHeader}>Secure Your App (SSL)</div><select style={s.input}><option>Select Domain to secure</option><option>myapp.com</option></select><div style={s.planGrid}><div style={s.planCard}><h4>Basic SSL</h4><h2 style={{margin:'10px 0'}}>$9.99<small>/yr</small></h2><p style={{fontSize:'12px', color:'#666'}}>Domain Validation</p><button style={s.outlineBtn}>Select</button></div><div style={{...s.planCard, border:`2px solid ${themeColor}`}}><h4>Wildcard SSL</h4><h2 style={{margin:'10px 0'}}>$45.00<small>/yr</small></h2><p style={{fontSize:'12px', color:'#666'}}>All Subdomains</p><button style={{...s.mainBtnFull, background:themeColor, padding:'8px'}}>Select</button></div></div><div style={s.infoBanner}><Lock size={16}/> SSL protects user data.</div></div>);
-    case 'd_status': return (<div style={s.deepPage}><div style={s.sectionHeader}>Publish Status</div><div style={s.tableCard}><div style={s.tableRow}><div><b>E-Commerce Pro v2</b><p>Updated: Today</p></div><span style={{color:'orange', fontWeight:'bold'}}><Activity size={14}/> Pending</span></div><div style={s.tableRow}><div><b>Admin Console UI</b><p>Updated: 10 Feb</p></div><span style={{color:'green', fontWeight:'bold'}}><CheckCircle size={14}/> Approved</span></div><div style={s.tableRow}><div><b>Chat App Backend</b><p>Updated: 05 Feb</p></div><span style={{color:'red', fontWeight:'bold'}}><XCircle size={14}/> Rejected</span></div><div style={s.rejectionBox}><b>Admin Comment:</b> Please fix and resubmit.</div></div><div style={s.btnRow}><button style={s.outlineBtn}><Edit3 size={14}/> Edit App</button><button style={s.outlineBtn}><RotateCw size={14}/> Resubmit</button></div></div>);
-    case 'd_renewal_website': return (<div style={s.deepPage}><div style={s.sectionHeader}>Website Hosting Renewal</div><div style={s.walletCard}><p>E-Commerce Pro Server</p><h1>18 Days Left</h1><small>Expires: 05 March 2026</small></div><div style={s.infoRow}><span>Renewal Cost</span><b>$45.00 / month</b></div><div style={s.actionRow}><span><RotateCw size={16} color={themeColor}/> Auto Renewal</span><input type="checkbox" defaultChecked /></div><button style={{...s.mainBtnFull, background:themeColor, marginTop:'15px'}}>Renew Now</button></div>);
-    case 'd_renewal_domain': return (<div style={s.deepPage}><div style={s.sectionHeader}>Domain Renewal</div><div style={s.tableCard}><div style={s.tableRow}><div><b>myapp.com</b><p style={{color:'red'}}>Expiring in 5 days!</p></div><b>$12.99</b></div><button style={{...s.mainBtnFull, background:themeColor, margin:'10px 0'}}>Renew Domain</button><div style={s.tableRow}><div><b>webguru.net</b><p>Expires: Dec 2026</p></div><span style={{color:'green'}}>Active</span></div></div></div>);
-    case 'd_seo': return (<div style={s.deepPage}><div style={s.sectionHeader}>SEO & Ads Campaign</div><input style={s.input} placeholder="Campaign Name" /><input style={s.input} placeholder="Target Keywords" /><div style={s.inputRow}><input style={{...s.input, flex:1}} placeholder="Daily Budget ($)" type="number" /><select style={{...s.input, flex:1}}><option>Target: Global</option><option>Target: Local</option></select></div><div style={s.sectionHeader}>Performance Analytics</div><div style={s.statGrid}><div style={s.statCard}><h4>1.4k</h4><p>Total Clicks</p></div><div style={s.statCard}><h4>3.4%</h4><p>CTR</p></div></div><div style={s.chartMock}>{[40, 70, 95, 60, 85, 100, 75].map((h,i) => <div key={i} style={{...s.bar, height:h+'%', background:themeColor}}></div>)}</div><button style={{...s.mainBtnFull, background:themeColor, marginTop:'15px'}}>Start Campaign</button></div>);
-    case 'd_project_list': return (<div style={s.deepPage}><div style={s.sectionHeader}>My Projects</div><button style={{...s.outlineBtn, width:'100%', marginBottom:'15px'}}><Plus size={16}/> Create New Project</button><div style={s.tableCard}><div style={s.tableRow}><div><b>E-Commerce Platform</b><p>Team: 3 Members</p></div><span style={{color:'green'}}>Active</span></div><div style={s.tableRow}><div><b>CRM Dashboard</b><p>Team: 1 Member</p></div><span style={{color:'orange'}}>Development</span></div></div></div>);
-    case 'd_performance': return (<div style={s.deepPage}><div style={s.sectionHeader}>Global Performance</div><select style={s.input}><option>All Projects</option><option>E-Commerce Platform</option></select><div style={s.statGrid}><div style={s.statCard}><TrendingUp size={20} color="green"/><h4>45K</h4><p>Monthly Traffic</p></div><div style={s.statCard}><Activity size={20} color="blue"/><h4>98/100</h4><p>Speed Score</p></div></div></div>);
-    case 'd_invite': return (<div style={s.deepPage}><div style={s.sectionHeader}>Team Management</div><div style={s.inputRow}><input style={{...s.input, flex:2}} placeholder="Developer Email" /><select style={{...s.input, flex:1}}><option>Admin</option><option>Dev</option><option>Viewer</option></select></div><button style={{...s.mainBtnFull, background:themeColor}}>Send Invite</button><div style={{...s.sectionHeader, marginTop: '20px'}}>Pending Invites</div><div style={s.tableRow}><div><b>alex@webguru.com</b><p>Role: Dev</p></div><span style={{color:'orange'}}>Pending</span></div></div>);
-    case 'd_legal': return (<div style={s.deepPage}><div style={s.sectionHeader}>Legal & Guidelines</div><div style={s.tableCard}><div style={s.legalRow}><div><FileText size={18} color={themeColor} style={{marginRight:'10px'}}/><b>Privacy Policy</b></div><Link size={16} color="#666"/></div><div style={s.legalRow}><div><FileText size={18} color={themeColor} style={{marginRight:'10px'}}/><b>Terms & Conditions</b></div><Link size={16} color="#666"/></div></div></div>);
-    case 'c_profile': return (<div style={s.deepPage}><div style={s.sectionHeader}>Business Profile</div><div style={s.profileUpload}><UploadCloud size={24} color={themeColor}/><p>Upload Company Logo</p></div><input style={s.input} placeholder="Company Name" /><input style={s.input} placeholder="Contact Person" /><div style={s.inputRow}><input style={{...s.input, flex:1}} placeholder="Email" /><BadgeCheck size={20} color="green" /></div><div style={s.sectionHeader}>Billing & Industry</div><input style={s.input} placeholder="Business Type" /><input style={s.input} placeholder="GST Number" /><textarea style={s.inputArea} placeholder="Billing Address"></textarea><div style={s.statusBanner}>Status: <b>ACTIVE CLIENT</b></div></div>);
-    case 'c_performance': return (<div style={s.deepPage}><div style={s.sectionHeader}>Traffic & Engagement</div><div style={s.statGrid}><div style={s.statCard}><h4>12k</h4><p>Visitors</p></div><div style={s.statCard}><h4>4.2%</h4><p>Conversion</p></div><div style={s.statCard}><h4>0.9s</h4><p>Avg Speed</p></div></div><div style={s.chartMock}>{[30, 60, 90, 45, 75, 55, 80].map((h,i) => <motion.div key={i} initial={{height:0}} animate={{height:h+'%'}} style={{...s.bar, background:themeColor}}></motion.div>)}</div></div>);
-    case 'c_status': return (<div style={s.deepPage}><div style={s.walletCard}><p>Infrastructure Health</p><h1>OPERATIONAL</h1><small>99.9% Uptime Monitor</small></div><ActionRow icon={<Server/>} label="Hosting Node Status" /><ActionRow icon={<ShieldCheck/>} label="SSL Encryption" /><button style={{...s.mainBtnFull, background:themeColor, marginTop:'20px'}}>Renew Infrastructure</button></div>);
-    case 'c_ads': return (<div style={s.deepPage}><div style={s.sectionHeader}>Ad Campaign ROI</div><div style={s.notifyCard}><div style={s.pulseDot}></div><div style={{flex:1}}><b>Winter Promo</b><p>Active • Target: Europe</p></div><button style={s.miniBtn}>Pause</button></div><input style={s.input} placeholder="Budget Increase ($)" type="number" /><button style={{...s.mainBtnFull, background:themeColor}}>Launch New Campaign</button></div>);
-    case 'c_feedback': return (<div style={s.deepPage}><div style={s.statGrid}><div style={s.statCard}><h4>4.9/5</h4><p>Avg Rating</p></div><div style={s.statCard}><h4>142</h4><p>Reviews</p></div></div><div style={s.historyCard}><div style={{flex:1}}><b>Alice Johnson</b><p>"Great UI and performance."</p><small>Today 11:30 AM</small></div><MessageCircle size={18} color={themeColor}/></div><button style={s.clearBtnFull}>View Review History</button></div>);
-    case 'c_renewal': return (<div style={s.deepPage}><div style={s.sectionHeader}>Website Renewal</div><div style={s.walletCard}><p>Your Website</p><h1>25 Days Left</h1><small>Expires: 30 March 2026</small></div><button style={{...s.mainBtnFull, background:themeColor}}>Renew Now</button></div>);
-    case 'a_profile': return (<div style={s.deepPage}><div style={s.sectionHeader}>Admin Master Console</div><div style={s.profileUpload}><ShieldCheck size={28} color={themeColor}/><p>Alex Admin (Super)</p></div><ActionRow icon={<Lock/>} label="Password Verification" /><ActionRow icon={<Activity/>} label="Master Activity Log" /><div style={s.enterpriseBadge}>ADMIN PRIVILEGES GRANTED</div></div>);
-    case 'a_listing': return (<div style={s.deepPage}><div style={s.filterBar}><Search size={14}/> <input placeholder="Search global sites..." style={{border:'none', background:'transparent', flex:1}} /></div><div style={s.tableCard}><div style={s.tableRow}><div><b>MarketNode.io</b><p>Category: E-Comm</p></div><b style={{color:'green'}}>$1,240</b></div><div style={s.tableRow}><div><b>DevDocs.com</b><p>Category: Tools</p></div><b>$0.00</b></div></div></div>);
-    case 'a_approve': return (<div style={s.deepPage}><div style={s.sectionHeader}>Website Approval Queue</div><div style={s.tableCard}><div style={s.tableRow}><div><b>TechStart.io</b><p>Developer: John Doe</p></div><button style={s.miniBtn}>Approve</button></div><div style={s.tableRow}><div><b>MyShop.com</b><p>Developer: Jane Smith</p></div><button style={s.miniBtn}>Approve</button></div></div></div>);
-    case 'a_renew_list': return (<div style={s.deepPage}><div style={s.sectionHeader}>Renewal Website List</div><div style={s.tableCard}><div style={s.tableRow}><div><b>E-Comm Pro</b><p>Expires: 15 Mar</p></div><b>$45.00</b></div><div style={s.tableRow}><div><b>Blog Master</b><p>Expires: 20 Mar</p></div><b>$25.00</b></div></div></div>);
-    case 'a_ads_view': return (<div style={s.deepPage}><div style={s.sectionHeader}>Active Ad Campaigns</div><div style={s.statGrid}><div style={s.statCard}><h4>12</h4><p>Active</p></div><div style={s.statCard}><h4>$2,450</h4><p>Revenue</p></div></div></div>);
-    case 'a_ads_set': return (<div style={s.deepPage}><div style={s.sectionHeader}>Ads Settings</div><ActionRow icon={<DollarSign/>} label="Global Ad Revenue Share" /><ActionRow icon={<Eye/>} label="Ad Visibility" isToggle /></div>);
-    case 'a_payments': return (<div style={s.deepPage}><div style={s.sectionHeader}>Global Payments</div><div style={s.tableCard}><div style={s.tableRow}><div><b>Payment #1001</b><p>User: John</p></div><b style={{color:'green'}}>$45.00</b></div><div style={s.tableRow}><div><b>Payment #1002</b><p>User: Jane</p></div><b style={{color:'green'}}>$120.00</b></div></div></div>);
-    case 'a_profit': return (<div style={s.deepPage}><div style={s.sectionHeader}>Global Profit Checker</div><div style={s.walletCard}><p>Total Revenue</p><h1>$12,450</h1></div><div style={s.statGrid}><div style={s.statCard}><h4>$8,200</h4><p>Net Profit</p></div><div style={s.statCard}><h4>65%</h4><p>Margin</p></div></div></div>);
-    case 'a_legal': return (<div style={s.deepPage}><div style={s.sectionHeader}>Legal & Policy Management</div><div style={s.tableCard}><div style={s.legalRow}><span>Privacy Policy</span> <Edit3 size={16} color={themeColor}/></div><div style={s.legalRow}><span>Terms of Service</span> <Edit3 size={16} color={themeColor}/></div><div style={s.legalRow}><span>Refund Policy</span> <Edit3 size={16} color={themeColor}/></div></div></div>);
-    case 'u_legal': case 'd_legal': case 'c_legal': return (<div style={s.deepPage}>{['Service Agreement', 'Privacy Policy', 'Refund Policy', 'Data Usage'].map(l => (<div key={l} style={s.legalRow}><span>{l}</span> <Download size={18} color={themeColor}/></div>))}<div style={s.acceptBox}><input type="checkbox" /> I accept global data guidelines</div></div>);
-    default: return <div style={s.placeholder}>System node for {module.title} active.</div>;
+    case 'u_profile': return (
+      <div style={s.deepPage}>
+        <div style={{...s.profileUpload, width: isMobile ? '70px' : '80px', height: isMobile ? '70px' : '80px'}}>
+          <Camera size={isMobile ? 20 : 24} color={themeColor}/>
+        </div>
+        <input style={{...s.input, padding: isMobile ? '12px' : '15px'}} placeholder="Full Name" />
+        <input style={{...s.input, padding: isMobile ? '12px' : '15px'}} placeholder="Email" />
+        <ActionRow icon={<Lock/>} label="Change Master Password" />
+        <ActionRow icon={<ShieldCheck/>} label="Two-Factor Authentication" isToggle />
+        <button style={{...s.dangerBtn, padding: isMobile ? '12px' : '14px'}}>Deactivate Account</button>
+      </div>
+    );
+    case 'u_history': return (
+      <div style={s.deepPage}>
+        <div style={s.tabHeader}>
+          <button style={activeTab === 'sites' ? s.tabOn : s.tabOff} onClick={()=>setActiveTab('sites')}>Recently Viewed</button>
+          <button style={activeTab === 'search' ? s.tabOn : s.tabOff} onClick={()=>setActiveTab('search')}>Search History</button>
+        </div>
+        {activeTab === 'sites' ? (
+          <div style={s.listArea}>
+            <div style={{...s.historyCard, padding: cardPadding}}>
+              <div style={{...s.siteThumb, width: isMobile ? '36px' : '40px', height: isMobile ? '36px' : '40px'}}>
+                <img src={Mainlogo} width="20" alt="logo"/>
+              </div>
+              <div style={{flex:1}}>
+                <b style={{fontSize: titleSize}}>Global Web Guru</b>
+                <p style={{fontSize: isMobile ? '10px' : '12px'}}>E-Commerce • Today 10:20 AM</p>
+              </div>
+              <button style={s.miniBtn}>Visit Again</button>
+              <Trash2 size={16} color="#cbd5e1"/>
+            </div>
+            <div style={s.sectionHeader}>Clear History Options</div>
+            <div style={s.btnRow}>
+              <button style={s.outlineBtn}>Last 24h</button>
+              <button style={s.outlineBtn}>Last 7 Days</button>
+              <button style={s.clearBtnFull}>Clear All</button>
+            </div>
+          </div>
+        ) : (
+          <div style={s.listArea}>
+            <div style={{...s.searchLogItem, padding: cardPadding}}><Search size={14}/> <span>React Infrastructure Templates</span> <small>Today</small></div>
+            <button style={s.clearBtnFull}>Clear All Search Logs</button>
+          </div>
+        )}
+      </div>
+    );
+    case 'u_saved': return (
+      <div style={s.deepPage}>
+        <div style={{...s.folderGrid, gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr'}}>
+          <div style={{...s.folder, padding: isMobile ? '15px' : '20px'}}><Heart fill={themeColor} color={themeColor}/> Favorites</div>
+          <div style={{...s.folder, padding: isMobile ? '15px' : '20px'}}><Briefcase color={themeColor}/> Work</div>
+          <div style={{...s.folder, padding: isMobile ? '15px' : '20px'}}><PlusCircle color="#999"/> New Category</div>
+        </div>
+        <div style={{...s.historyCard, padding: cardPadding}}>
+          <div style={{flex:1}}><b style={{fontSize: titleSize}}>React-Silk-UI.com</b><p style={{fontSize: isMobile ? '10px' : '12px'}}>Category: Dev Tools</p></div>
+          <ExternalLink size={18} color={themeColor}/>
+        </div>
+      </div>
+    );
+    case 'u_notify': return (
+      <div style={s.deepPage}>
+        <div style={{...s.notifyCard, padding: cardPadding}}>
+          <div style={s.pulseDot}></div>
+          <div style={{flex:1}}><b style={{fontSize: titleSize}}>Website Approved</b><p style={{fontSize: isMobile ? '10px' : '12px'}}>Infrastructure deployment successful.</p></div>
+          <Check size={16} color={colors.success}/>
+        </div>
+        <div style={s.sectionHeader}>System Alert Controls</div>
+        <ActionRow icon={<BadgeCheck/>} label="Approval Alerts" isToggle />
+        <ActionRow icon={<RotateCw/>} label="Renewal Reminders" isToggle />
+        <ActionRow icon={<Zap/>} label="Ads Performance alert" isToggle />
+      </div>
+    );
+    case 'u_refer': case 'd_refer': case 'c_refer': return (
+      <div style={s.deepPage}>
+        <div style={{...s.walletCard, background: `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}CC 100%)`, padding: isMobile ? '20px' : '30px'}}>
+          <p style={{fontSize: isMobile ? '12px' : '14px', opacity: 0.9}}>Withdrawable Balance</p>
+          <h1 style={{fontSize: isMobile ? '32px' : '40px'}}>$124.50</h1>
+          <div style={{...s.linkCopy, background: 'rgba(255,255,255,0.2)'}}><span style={{fontSize: isMobile ? '11px' : '12px'}}>wgg.io/ref/USER7X2</span> <Copy size={16} /></div>
+        </div>
+        <div style={{...s.statGrid, gap: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.statCard, padding: isMobile ? '12px' : '15px'}}><h4 style={{fontSize: isMobile ? '18px' : '20px'}}>24</h4><p style={{fontSize: isMobile ? '10px' : '12px'}}>Total Ref</p></div>
+          <div style={{...s.statCard, padding: isMobile ? '12px' : '15px'}}><h4 style={{fontSize: isMobile ? '18px' : '20px'}}>18</h4><p style={{fontSize: isMobile ? '10px' : '12px'}}>Active</p></div>
+        </div>
+        <button style={{...s.mainBtnFull, background: themeColor, padding: isMobile ? '14px' : '15px'}}>Request Withdraw</button>
+      </div>
+    );
+    case 'u_feed': case 'd_feed': return (
+      <div style={s.deepPage}>
+        <div style={s.ratingRow}>{[1,2,3,4,5].map(i => <Star key={i} size={isMobile ? 24 : 30} color={i <= 4 ? "#FFD700" : "#ddd"} fill={i <= 4 ? "#FFD700" : "none"} />)}</div>
+        <select style={{...s.input, padding: isMobile ? '12px' : '15px'}}><option>Select Category</option><option>Bug Report</option><option>Suggestion</option></select>
+        <textarea style={{...s.inputArea, padding: isMobile ? '12px' : '15px', height: isMobile ? '80px' : '100px'}} placeholder="How can we improve?"></textarea>
+        <button style={{...s.mainBtnFull, background: themeColor, padding: isMobile ? '14px' : '15px'}}>Submit Feedback</button>
+      </div>
+    );
+    case 'd_profile': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Developer Identity</div>
+        <div style={{...s.profileHeader, flexDirection: isMobile ? 'column' : 'row', textAlign: isMobile ? 'center' : 'left'}}>
+          <div style={{...s.profileUpload, width: isMobile ? '70px' : '80px', height: isMobile ? '70px' : '80px', margin: isMobile ? '0 auto 15px' : '0 20px 0 0'}}>
+            <Terminal size={isMobile ? 24 : 30} color={themeColor}/>
+          </div>
+          <div>
+            <h3 style={{margin: 0, fontSize: titleSize}}>John Doe</h3>
+            <p style={{margin: 0, color: colors.gray, fontSize: isMobile ? '10px' : '12px'}}>Verified Developer</p>
+          </div>
+        </div>
+        <input style={{...s.input, padding: isMobile ? '12px' : '15px'}} placeholder="Full Name" defaultValue="John Doe" />
+        <input style={{...s.input, padding: isMobile ? '12px' : '15px'}} placeholder="Email" defaultValue="john@example.com" />
+        <button style={{...s.mainBtnFull, background: themeColor, marginTop: '15px', padding: isMobile ? '14px' : '15px'}}>Save Profile</button>
+      </div>
+    );
+    case 'd_publish': return <PublishWebsiteForm themeColor={themeColor} isMobile={isMobile} />;
+    case 'd_buy_domain': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Buy Global Domain</div>
+        <div style={{...s.searchContainer, padding: isMobile ? '8px 12px' : '10px 15px'}}>
+          <Search size={18} color={colors.gray}/>
+          <input style={{...s.searchInput, padding: isMobile ? '8px' : '10px'}} placeholder="Search domain" />
+          <button style={{...s.searchBtn, padding: isMobile ? '8px 12px' : '10px 16px'}}>Search</button>
+        </div>
+        <div style={{...s.tableCard, padding: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.tableRow, padding: isMobile ? '12px 8px' : '15px 10px'}}><div><b style={{fontSize: isMobile ? '12px' : '14px'}}>myapp.com</b><p style={{color: colors.success, fontSize: isMobile ? '10px' : '12px'}}>Available</p></div><button style={s.buyBtn}>$12.99 / yr</button></div>
+        </div>
+      </div>
+    );
+    case 'd_buy_ssl': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Secure Your App (SSL)</div>
+        <div style={{...s.planGrid, flexDirection: isMobile ? 'column' : 'row'}}>
+          <div style={{...s.planCard, padding: isMobile ? '15px' : '20px'}}><h4 style={{fontSize: titleSize}}>Basic SSL</h4><h2 style={{margin: '10px 0', fontSize: isMobile ? '20px' : '24px'}}>$9.99<small>/yr</small></h2><button style={s.outlineBtn}>Select</button></div>
+          <div style={{...s.planCard, padding: isMobile ? '15px' : '20px', border: `2px solid ${themeColor}`}}><h4 style={{fontSize: titleSize}}>Wildcard SSL</h4><h2 style={{margin: '10px 0', fontSize: isMobile ? '20px' : '24px'}}>$45.00<small>/yr</small></h2><button style={{...s.mainBtnFull, background: themeColor, padding: isMobile ? '8px' : '10px'}}>Select</button></div>
+        </div>
+      </div>
+    );
+    case 'd_status': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Publish Status</div>
+        <div style={{...s.tableCard, padding: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.tableRow, padding: isMobile ? '12px 8px' : '15px 10px'}}><div><b style={{fontSize: isMobile ? '12px' : '14px'}}>E-Commerce Pro v2</b><p style={{fontSize: isMobile ? '10px' : '12px'}}>Updated: Today</p></div><span style={{color: colors.warning, fontWeight: 'bold'}}><Activity size={14}/> Pending</span></div>
+          <div style={{...s.tableRow, padding: isMobile ? '12px 8px' : '15px 10px'}}><div><b style={{fontSize: isMobile ? '12px' : '14px'}}>Admin Console UI</b><p style={{fontSize: isMobile ? '10px' : '12px'}}>Updated: 10 Feb</p></div><span style={{color: colors.success, fontWeight: 'bold'}}><CheckCircle size={14}/> Approved</span></div>
+        </div>
+      </div>
+    );
+    case 'd_renewal_website': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Website Hosting Renewal</div>
+        <div style={{...s.walletCard, background: `linear-gradient(135deg, ${themeColor} 0%, ${themeColor}CC 100%)`, padding: isMobile ? '20px' : '30px'}}>
+          <p style={{fontSize: isMobile ? '12px' : '14px', opacity: 0.9}}>E-Commerce Pro Server</p>
+          <h1 style={{fontSize: isMobile ? '28px' : '36px'}}>18 Days Left</h1>
+        </div>
+        <button style={{...s.mainBtnFull, background: themeColor, marginTop: '15px', padding: isMobile ? '14px' : '15px'}}>Renew Now</button>
+      </div>
+    );
+    case 'd_seo': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>SEO & Ads Campaign</div>
+        <input style={{...s.input, padding: isMobile ? '12px' : '15px'}} placeholder="Campaign Name" />
+        <input style={{...s.input, padding: isMobile ? '12px' : '15px'}} placeholder="Target Keywords" />
+        <div style={{...s.statGrid, gap: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.statCard, padding: isMobile ? '12px' : '15px'}}><h4 style={{fontSize: isMobile ? '18px' : '20px'}}>1.4k</h4><p style={{fontSize: isMobile ? '10px' : '12px'}}>Total Clicks</p></div>
+          <div style={{...s.statCard, padding: isMobile ? '12px' : '15px'}}><h4 style={{fontSize: isMobile ? '18px' : '20px'}}>3.4%</h4><p style={{fontSize: isMobile ? '10px' : '12px'}}>CTR</p></div>
+        </div>
+        <button style={{...s.mainBtnFull, background: themeColor, marginTop: '15px', padding: isMobile ? '14px' : '15px'}}>Start Campaign</button>
+      </div>
+    );
+    case 'd_project_list': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>My Projects</div>
+        <button style={{...s.outlineBtn, width: '100%', marginBottom: '15px', padding: isMobile ? '12px' : '14px'}}><Plus size={16}/> Create New Project</button>
+        <div style={{...s.tableCard, padding: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.tableRow, padding: isMobile ? '12px 8px' : '15px 10px'}}><div><b style={{fontSize: isMobile ? '12px' : '14px'}}>E-Commerce Platform</b><p style={{fontSize: isMobile ? '10px' : '12px'}}>Team: 3 Members</p></div><span style={{color: colors.success}}>Active</span></div>
+        </div>
+      </div>
+    );
+    case 'c_profile': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Business Profile</div>
+        <input style={{...s.input, padding: isMobile ? '12px' : '15px'}} placeholder="Company Name" />
+        <input style={{...s.input, padding: isMobile ? '12px' : '15px'}} placeholder="Contact Person" />
+        <div style={{...s.statusBanner, padding: isMobile ? '10px' : '12px'}}>Status: <b>ACTIVE CLIENT</b></div>
+      </div>
+    );
+    case 'c_performance': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Traffic & Engagement</div>
+        <div style={{...s.statGrid, gap: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.statCard, padding: isMobile ? '12px' : '15px'}}><h4 style={{fontSize: isMobile ? '18px' : '20px'}}>12k</h4><p style={{fontSize: isMobile ? '10px' : '12px'}}>Visitors</p></div>
+          <div style={{...s.statCard, padding: isMobile ? '12px' : '15px'}}><h4 style={{fontSize: isMobile ? '18px' : '20px'}}>4.2%</h4><p style={{fontSize: isMobile ? '10px' : '12px'}}>Conversion</p></div>
+        </div>
+      </div>
+    );
+    case 'c_status': return (
+      <div style={s.deepPage}>
+        <div style={{...s.walletCard, background: `linear-gradient(135deg, ${colors.success} 0%, ${colors.success}CC 100%)`, padding: isMobile ? '20px' : '30px'}}>
+          <p style={{fontSize: isMobile ? '12px' : '14px', opacity: 0.9}}>Infrastructure Health</p>
+          <h1 style={{fontSize: isMobile ? '24px' : '32px'}}>OPERATIONAL</h1>
+        </div>
+        <button style={{...s.mainBtnFull, background: themeColor, marginTop: '20px', padding: isMobile ? '14px' : '15px'}}>Renew Infrastructure</button>
+      </div>
+    );
+    case 'a_profile': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Admin Master Console</div>
+        <div style={{...s.profileUpload, width: isMobile ? '70px' : '80px', height: isMobile ? '70px' : '80px'}}>
+          <ShieldCheck size={isMobile ? 24 : 28} color={themeColor}/>
+        </div>
+        <ActionRow icon={<Lock/>} label="Password Verification" />
+        <ActionRow icon={<Activity/>} label="Master Activity Log" />
+        <div style={{...s.enterpriseBadge, padding: isMobile ? '10px' : '12px'}}>ADMIN PRIVILEGES GRANTED</div>
+      </div>
+    );
+    case 'a_listing': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Global Listings</div>
+        <div style={{...s.tableCard, padding: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.tableRow, padding: isMobile ? '12px 8px' : '15px 10px'}}><div><b style={{fontSize: isMobile ? '12px' : '14px'}}>MarketNode.io</b><p style={{fontSize: isMobile ? '10px' : '12px'}}>Category: E-Comm</p></div><b style={{color: colors.success}}>$1,240</b></div>
+        </div>
+      </div>
+    );
+    case 'a_approve': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Website Approval Queue</div>
+        <div style={{...s.tableCard, padding: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.tableRow, padding: isMobile ? '12px 8px' : '15px 10px'}}><div><b style={{fontSize: isMobile ? '12px' : '14px'}}>TechStart.io</b></div><button style={s.miniBtn}>Approve</button></div>
+        </div>
+      </div>
+    );
+    case 'a_profit': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Global Profit Checker</div>
+        <div style={{...s.walletCard, background: `linear-gradient(135deg, ${colors.success} 0%, ${colors.success}CC 100%)`, padding: isMobile ? '20px' : '30px'}}>
+          <p style={{fontSize: isMobile ? '12px' : '14px', opacity: 0.9}}>Total Revenue</p>
+          <h1 style={{fontSize: isMobile ? '28px' : '40px'}}>$12,450</h1>
+        </div>
+        <div style={{...s.statGrid, gap: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.statCard, padding: isMobile ? '12px' : '15px'}}><h4 style={{fontSize: isMobile ? '18px' : '20px'}}>$8,200</h4><p style={{fontSize: isMobile ? '10px' : '12px'}}>Net Profit</p></div>
+          <div style={{...s.statCard, padding: isMobile ? '12px' : '15px'}}><h4 style={{fontSize: isMobile ? '18px' : '20px'}}>65%</h4><p style={{fontSize: isMobile ? '10px' : '12px'}}>Margin</p></div>
+        </div>
+      </div>
+    );
+    case 'a_payments': return (
+      <div style={s.deepPage}>
+        <div style={s.sectionHeader}>Global Payments</div>
+        <div style={{...s.tableCard, padding: isMobile ? '8px' : '10px'}}>
+          <div style={{...s.tableRow, padding: isMobile ? '12px 8px' : '15px 10px'}}><div><b>Payment #1001</b></div><b style={{color: colors.success}}>$45.00</b></div>
+        </div>
+      </div>
+    );
+    default: return <div style={{...s.placeholder, padding: isMobile ? '20px' : '40px'}}>System node for {module?.title} active.</div>;
   }
 };
 
@@ -421,18 +543,6 @@ export const RoleGateway = ({ onSelect, theme }) => (
   </div>
 );
 
-const ModuleList = ({ modules, onSelect, theme }) => (
-  <div style={s.verticalList}>
-    {modules.map(mod => (
-      <div key={mod.id} onClick={() => onSelect(mod)} style={s.clickableRowCard}>
-         <div style={{...s.iconBoxSmall, background: `${theme}11`}}>{React.cloneElement(mod.icon, {size: 18, color: theme})}</div>
-         <div style={{flex:1}}><div style={s.mTitle}>{mod.title}</div><div style={s.mSub}>{mod.sub}</div></div>
-         <ChevronRight size={18} color="#cbd5e1" />
-      </div>
-    ))}
-  </div>
-);
-
 const RoleCard = ({ icon, title, onClick, color, desc }) => (
   <div onClick={onClick} style={s.clickableRowCard}>
     <div style={{...s.iconBox, background: `${color}11`}}>{React.cloneElement(icon, {size: 24, color: color})}</div>
@@ -443,72 +553,71 @@ const RoleCard = ({ icon, title, onClick, color, desc }) => (
 
 const ActionRow = ({ icon, label, isToggle }) => {
     const [on, setOn] = useState(false);
-    return (<div style={s.detailRow}><div style={{display:'flex', alignItems:'center', gap:'15px'}}>{React.cloneElement(icon, {size: 18, color: '#7D5A5C'})} <span>{label}</span></div>{isToggle ? (<div onClick={()=>setOn(!on)} style={{...s.toggle, background: on ? '#DD7A83' : '#ccc'}}><div style={{...s.toggleCircle, transform: on ? 'translateX(18px)' : 'translateX(0)'}}></div></div>) : <ChevronRight size={16} color="#ccc"/>}</div>);
+    return (<div style={s.detailRow}><div style={{display:'flex', alignItems:'center', gap:'15px'}}>{React.cloneElement(icon, {size: 18, color: colors.gray})} <span>{label}</span></div>{isToggle ? (<div onClick={()=>setOn(!on)} style={{...s.toggle, background: on ? colors.primary : '#ccc'}}><div style={{...s.toggleCircle, transform: on ? 'translateX(18px)' : 'translateX(0)'}}></div></div>) : <ChevronRight size={16} color="#ccc"/>}</div>);
 };
 
 // --- STYLES OBJECT (s = settings) ---
 const s = {
   deepPage: { animation: 'fadeIn 0.4s' },
   tabHeader: { display: 'flex', gap: '10px', marginBottom: '20px' },
-  tabOn: { background: '#DD7A83', color: '#fff', border:'none', padding: '8px 20px', borderRadius:'10px', fontWeight:'700', cursor:'pointer' },
-  tabOff: { background: '#FDF2F3', color: '#7D5A5C', border:'none', padding: '8px 20px', borderRadius:'10px', cursor:'pointer' },
-  historyCard: { padding: '15px', background: '#FFF9F9', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px', border: '1px solid #FDF2F3' },
+  tabOn: { background: colors.primary, color: '#fff', border:'none', padding: '8px 20px', borderRadius:'10px', fontWeight:'700', cursor:'pointer' },
+  tabOff: { background: colors.lightest, color: colors.gray, border:'none', padding: '8px 20px', borderRadius:'10px', cursor:'pointer' },
+  historyCard: { padding: '15px', background: colors.lightest, borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px', border: '1px solid colors.lightGray' },
   siteThumb: { width: '40px', height: '40px', background: '#fff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  miniBtn: { padding: '5px 12px', background: '#DD7A83', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: '700', cursor:'pointer' },
+  miniBtn: { padding: '5px 12px', background: colors.primary, color: '#fff', border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: '700', cursor:'pointer' },
   btnRow: { display: 'flex', gap: '10px', marginBottom: '15px' },
-  outlineBtn: { flex: 1, padding: '10px', background: '#fff', border: '1px solid #ddd', borderRadius: '12px', fontSize: '12px', cursor:'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' },
-  clearBtnFull: { width: '100%', padding: '12px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '12px', fontWeight: '800', marginTop: '10px', cursor:'pointer' },
-  folderGrid: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' },
-  folder: { padding: '20px', background: '#FFF9F9', borderRadius: '18px', textAlign: 'center', fontWeight: '700', border: '1px solid #FDF2F3', display:'flex', flexDirection:'column', alignItems:'center', gap:'10px' },
-  walletCard: { padding: '30px', background: '#DD7A83', borderRadius: '25px', color: '#fff', textAlign: 'center', marginBottom: '20px' },
+  outlineBtn: { flex: 1, padding: '10px', background: '#fff', border: '1px solid colors.lightGray', borderRadius: '12px', fontSize: '12px', cursor:'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' },
+  clearBtnFull: { width: '100%', padding: '12px', background: '#fee2e2', color: colors.danger, border: 'none', borderRadius: '12px', fontWeight: '800', marginTop: '10px', cursor:'pointer' },
+  folderGrid: { display: 'grid', gap: '10px', marginBottom: '20px' },
+  folder: { padding: '20px', background: colors.lightest, borderRadius: '18px', textAlign: 'center', fontWeight: '700', border: '1px solid colors.lightGray', display:'flex', flexDirection:'column', alignItems:'center', gap:'10px' },
+  walletCard: { padding: '30px', background: colors.primary, borderRadius: '25px', color: '#fff', textAlign: 'center', marginBottom: '20px' },
   linkCopy: { marginTop: '15px', padding: '10px', background: 'rgba(0,0,0,0.1)', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', fontSize: '12px' },
   statGrid: { display: 'flex', gap: '10px', marginBottom: '20px' },
-  statCard: { flex: 1, padding: '15px', background: '#FDF2F3', borderRadius: '15px', textAlign: 'center' },
-  notifyCard: { padding: '15px', background: '#FFF9F9', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px', borderLeft: '4px solid #DD7A83' },
-  pulseDot: { width: '10px', height: '10px', background: '#DD7A83', borderRadius: '50%' },
+  statCard: { flex: 1, padding: '15px', background: colors.lightest, borderRadius: '15px', textAlign: 'center' },
+  notifyCard: { padding: '15px', background: colors.lightest, borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px', borderLeft: `4px solid ${colors.primary}` },
+  pulseDot: { width: '10px', height: '10px', background: colors.primary, borderRadius: '50%' },
   ratingRow: { display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '25px' },
-  uploadBox: { padding: '20px', border: '2px dashed #ddd', borderRadius: '15px', textAlign: 'center', color: '#999', marginBottom: '15px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' },
-  legalRow: { padding: '18px', borderBottom: '1px solid #FDF2F3', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  acceptBox: { marginTop: '20px', fontSize: '12px', color: '#7D5A5C', display:'flex', gap:'10px', alignItems:'center' },
-  input: { width: '100%', padding: '15px', borderRadius: '12px', border: '1px solid #FDF2F3', marginBottom: '15px', fontFamily: 'inherit', boxSizing: 'border-box', background: '#fff' },
-  inputArea: { width: '100%', height: '100px', padding: '15px', borderRadius: '12px', border: '1px solid #FDF2F3', marginBottom: '15px', fontFamily: 'inherit', boxSizing: 'border-box', background: '#fff' },
-  sectionHeader: { fontSize: '14px', fontWeight: '800', color: '#4A1D1F', margin: '20px 0 10px 5px', textAlign: 'left', textTransform: 'uppercase' },
-  detailRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 0', borderBottom: '1px solid #FDF2F3' },
+  uploadBox: { padding: '20px', border: '2px dashed colors.lightGray', borderRadius: '15px', textAlign: 'center', color: colors.gray, marginBottom: '15px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' },
+  legalRow: { padding: '18px', borderBottom: `1px solid ${colors.lightGray}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
+  acceptBox: { marginTop: '20px', fontSize: '12px', color: colors.gray, display:'flex', gap:'10px', alignItems:'center' },
+  input: { width: '100%', padding: '15px', borderRadius: '12px', border: `1px solid ${colors.lightGray}`, marginBottom: '15px', fontFamily: 'inherit', boxSizing: 'border-box', background: '#fff' },
+  inputArea: { width: '100%', height: '100px', padding: '15px', borderRadius: '12px', border: `1px solid ${colors.lightGray}`, marginBottom: '15px', fontFamily: 'inherit', boxSizing: 'border-box', background: '#fff' },
+  sectionHeader: { fontSize: '14px', fontWeight: '800', color: colors.dark, margin: '20px 0 10px 5px', textAlign: 'left', textTransform: 'uppercase' },
+  detailRow: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 0', borderBottom: `1px solid ${colors.lightGray}` },
   toggle: { width: '36px', height: '18px', borderRadius: '10px', padding: '2px', cursor: 'pointer' },
   toggleCircle: { width: '14px', height: '14px', background: '#fff', borderRadius: '50%', transition: '0.3s' },
-  profileUpload: { width: '80px', height: '80px', borderRadius: '50%', background: '#FDF2F3', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px dashed #DD7A83', flexDirection: 'column', gap: '5px' },
+  profileUpload: { width: '80px', height: '80px', borderRadius: '50%', background: colors.lightest, margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `2px dashed ${colors.primary}`, flexDirection: 'column', gap: '5px' },
   inputRow: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '5px' },
-  statusBanner: { padding: '12px', background: '#e6f3ef', borderRadius: '10px', textAlign: 'center', color: '#01875f', fontSize: '13px' },
+  statusBanner: { padding: '12px', background: '#e6f3ef', borderRadius: '10px', textAlign: 'center', color: colors.success, fontSize: '13px' },
   mainBtnFull: { width: '100%', padding: '15px', borderRadius: '12px', border: 'none', color: '#fff', fontWeight: '800', cursor: 'pointer', boxSizing: 'border-box' },
-  tableCard: { background: '#FFF9F9', borderRadius: '15px', padding: '10px', marginBottom: '15px' },
+  tableCard: { background: colors.lightest, borderRadius: '15px', padding: '10px', marginBottom: '15px' },
   tableRow: { display: 'flex', justifyContent: 'space-between', padding: '15px 10px', borderBottom: '1px solid #f1f1f1', fontSize: '14px', alignItems: 'center' },
-  rejectionBox: { padding: '10px', background: '#fee2e2', borderRadius: '10px', color: '#dc2626', fontSize: '12px', marginTop: '10px' },
-  infoRow: { display: 'flex', justifyContent: 'space-between', padding: '15px 0', borderBottom: '1px solid #FDF2F3' },
-  infoBanner: { padding: '12px', background: '#FDF2F3', borderRadius: '10px', color: '#7D5A5C', fontSize: '13px', textAlign: 'center', marginBottom: '15px' },
-  chartMock: { height: '100px', background: '#FFF9F9', borderRadius: '20px', display: 'flex', alignItems: 'flex-end', gap: '5px', padding: '10px' },
+  rejectionBox: { padding: '10px', background: '#fee2e2', borderRadius: '10px', color: colors.danger, fontSize: '12px', marginTop: '10px' },
+  infoRow: { display: 'flex', justifyContent: 'space-between', padding: '15px 0', borderBottom: `1px solid ${colors.lightGray}` },
+  infoBanner: { padding: '12px', background: colors.lightest, borderRadius: '10px', color: colors.gray, fontSize: '13px', textAlign: 'center', marginBottom: '15px' },
+  chartMock: { height: '100px', background: colors.lightest, borderRadius: '20px', display: 'flex', alignItems: 'flex-end', gap: '5px', padding: '10px' },
   bar: { flex: 1, borderRadius: '3px 3px 0 0' },
-  dangerBtn: { width: '100%', padding: '14px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '12px', fontWeight: '800', marginTop: '10px', cursor: 'pointer' },
-  placeholder: { padding: '40px', textAlign: 'center', color: '#999' },
-  enterpriseBadge: { marginTop: '20px', padding: '10px', background: '#4A1D1F', color: '#fff', textAlign: 'center', borderRadius: '10px', fontSize: '12px', fontWeight: '700' },
+  dangerBtn: { width: '100%', padding: '14px', background: '#fee2e2', color: colors.danger, border: 'none', borderRadius: '12px', fontWeight: '800', marginTop: '10px', cursor: 'pointer' },
+  placeholder: { padding: '40px', textAlign: 'center', color: colors.gray },
+  enterpriseBadge: { marginTop: '20px', padding: '10px', background: colors.dark, color: '#fff', textAlign: 'center', borderRadius: '10px', fontSize: '12px', fontWeight: '700' },
   filterBar: { padding: '10px', background: '#f9f9f9', borderRadius: '8px', marginBottom: '10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '10px' },
   profileHeader: { display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '20px' },
   searchContainer: { display: 'flex', gap: '10px', background: '#f5f5f5', padding: '5px', borderRadius: '8px', alignItems: 'center' },
   searchInput: { flex: 1, border: 'none', background: 'transparent', outline: 'none', padding: '8px' },
-  searchBtn: { background: '#4A1D1F', color: '#fff', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer' },
-  buyBtn: { background: '#28a745', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' },
+  searchBtn: { background: colors.dark, color: '#fff', border: 'none', padding: '8px 15px', borderRadius: '6px', cursor: 'pointer' },
+  buyBtn: { background: colors.success, color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' },
   planGrid: { display: 'flex', gap: '15px', marginTop: '10px' },
-  planCard: { flex: 1, background: '#fff', padding: '15px', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', textAlign: 'center' },
+  planCard: { flex: 1, background: '#fff', padding: '15px', borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', textAlign: 'center', border: `1px solid ${colors.lightGray}` },
   actionRow: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', padding: '12px 15px', borderRadius: '8px', border: '1px solid #eee', marginBottom: '15px' },
-  searchLogItem: { display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: '#FFF9F9', borderRadius: '10px', marginBottom: '10px', color: '#7D5A5C' },
+  searchLogItem: { display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: colors.lightest, borderRadius: '10px', marginBottom: '10px', color: colors.gray },
   listArea: { marginBottom: '15px' },
-  advancedBox: { marginTop: '20px', padding: '15px', background: '#FDF2F3', borderRadius: '15px' },
   verticalList: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  clickableRowCard: { background: '#FFF9F9', border: '1px solid #FDF2F3', borderRadius: '25px', padding: '18px 25px', display: 'flex', alignItems: 'center', gap: '20px', cursor: 'pointer', transition: '0.3s' },
+  clickableRowCard: { background: colors.lightest, border: `1px solid ${colors.lightGray}`, borderRadius: '25px', padding: '18px 25px', display: 'flex', alignItems: 'center', gap: '20px', cursor: 'pointer', transition: '0.3s' },
   iconBox: { width: '50px', height: '50px', borderRadius: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   iconBoxSmall: { width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  rowTitle: { flex: 1, fontSize: '17px', fontWeight: '800', color: '#4A1D1F', margin: 0 },
-  mTitle: { fontSize: '15px', fontWeight: '700', color: '#4A1D1F' },
-  mSub: { fontSize: '12px', color: '#94a3b8' },
+  rowTitle: { flex: 1, fontSize: '17px', fontWeight: '800', color: colors.dark, margin: 0 },
+  mTitle: { fontSize: '15px', fontWeight: '700', color: colors.dark },
+  mSub: { fontSize: '12px', color: colors.gray },
 };
 
 export default { RenderModuleContent, RoleGateway };
