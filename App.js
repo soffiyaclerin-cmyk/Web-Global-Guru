@@ -85,12 +85,12 @@ function App() {
   }, [view, isPaused, banners.length]);
 
   const navTabs = [
-    { name: "For You", icon: <Compass size={14} /> },
-    { name: "Top Charts", icon: <BarChart2 size={14} /> },
-    { name: "Categories", icon: <Grid size={14} /> },
-    { name: "Editor's Choice", icon: <Award size={14} /> },
-    { name: "New Apps", icon: <PlusCircle size={14} /> },
-    { name: "Trending", icon: <TrendingUp size={14} /> },
+    { name: "For You", icon: <Compass size={14} />, badge: null },
+    { name: "Top Charts", icon: <BarChart2 size={14} />, badge: null },
+    { name: "Categories", icon: <Grid size={14} />, badge: null },
+    { name: "Editor's Choice", icon: <Award size={14} />, badge: "Editor's" },
+    { name: "New Apps", icon: <PlusCircle size={14} />, badge: "New" },
+    { name: "Trending", icon: <TrendingUp size={14} />, badge: "Hot" },
   ];
 
   const popularApps = [
@@ -226,29 +226,99 @@ function App() {
               >
                 {/* Navigation Tabs */}
                 <div style={{
-                  ...styles.navScrollContainer,
+                  ...styles.navWrapper,
                   justifyContent: isDesktop ? 'center' : 'flex-start',
-                  overflowX: isMobile ? 'auto' : 'visible',
-                  WebkitOverflowScrolling: 'touch',
                 }}>
-                  {navTabs.map((tab) => (
-                    <button 
-                      key={tab.name} 
-                      style={{
-                        ...(activeTab === tab.name ? styles.navTabActive : styles.navTab),
-                        padding: isMobile ? '8px 14px' : '10px 20px',
-                        fontSize: isMobile ? '11px' : '13px',
-                        flexShrink: 0,
-                        minWidth: isMobile ? 'auto' : 'auto',
-                      }} 
-                      onClick={() => setActiveTab(tab.name)}
-                    >
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        {tab.icon}
-                        {tab.name}
-                      </span>
-                    </button>
-                  ))}
+                  {/* Left Fade Edge */}
+                  <div style={styles.navFadeLeft} />
+                  
+                  <div style={{
+                    ...styles.navScrollContainer,
+                    overflowX: isMobile ? 'auto' : 'visible',
+                    WebkitOverflowScrolling: 'touch',
+                    scrollSnapType: isMobile ? 'x mandatory' : 'none',
+                  }}>
+                    {navTabs.map((tab, index) => (
+                      <motion.button 
+                        key={tab.name}
+                        style={{
+                          ...(activeTab === tab.name ? styles.navTabActive : styles.navTab),
+                          padding: isMobile ? '10px 16px' : '12px 22px',
+                          fontSize: isMobile ? '11px' : '13px',
+                          flexShrink: 0,
+                          minWidth: isMobile ? 'auto' : 'auto',
+                          scrollSnapAlign: isMobile ? 'start' : 'none',
+                          position: 'relative',
+                        }}
+                        onClick={() => setActiveTab(tab.name)}
+                        whileHover={{ 
+                          scale: 1.05,
+                          boxShadow: '0 4px 15px rgba(99, 102, 241, 0.25)',
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                        animate={activeTab === tab.name ? { 
+                          backgroundColor: '#6366F1',
+                          boxShadow: '0 4px 20px rgba(99, 102, 241, 0.4)',
+                        } : {}}
+                        transition={{ 
+                          type: "spring", 
+                          stiffness: 400, 
+                          damping: 25 
+                        }}
+                      >
+                        <motion.span 
+                          style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '6px',
+                            color: activeTab === tab.name ? '#fff' : '#64748B',
+                          }}
+                          animate={{ 
+                            scale: activeTab === tab.name ? 1.1 : 1,
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          {React.cloneElement(tab.icon, { 
+                            size: isMobile ? 14 : 16,
+                            style: {
+                              transition: 'transform 0.3s ease',
+                              transform: activeTab === tab.name ? 'rotate(10deg)' : 'rotate(0deg)',
+                            }
+                          })}
+                          {tab.name}
+                        </motion.span>
+                        
+                        {/* Badge */}
+                        {tab.badge && (
+                          <motion.span
+                            style={{
+                              ...styles.badge,
+                              background: tab.badge === 'New' ? '#10B981' : tab.badge === 'Hot' ? '#EF4444' : '#EC4899',
+                              fontSize: isMobile ? '8px' : '9px',
+                              padding: isMobile ? '2px 5px' : '2px 6px',
+                            }}
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            transition={{ delay: 0.2, type: "spring" }}
+                          >
+                            {tab.badge}
+                          </motion.span>
+                        )}
+                        
+                        {/* Active Indicator Line */}
+                        {activeTab === tab.name && (
+                          <motion.div
+                            style={styles.activeIndicator}
+                            layoutId="activeIndicator"
+                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                          />
+                        )}
+                      </motion.button>
+                    ))}
+                  </div>
+                  
+                  {/* Right Fade Edge */}
+                  <div style={styles.navFadeRight} />
                 </div>
 
                 {/* Popular Apps Section */}
@@ -864,6 +934,53 @@ const styles = {
     color: '#1E293B', 
     margin: '20px 0 15px 5px', 
     textTransform: 'uppercase' 
+  },
+  navWrapper: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  navFadeLeft: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: '40px',
+    background: 'linear-gradient(to right, #F8FAFC, transparent)',
+    zIndex: 5,
+    pointerEvents: 'none',
+  },
+  navFadeRight: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: '40px',
+    background: 'linear-gradient(to left, #F8FAFC, transparent)',
+    zIndex: 5,
+    pointerEvents: 'none',
+  },
+  badge: {
+    position: 'absolute',
+    top: '-4px',
+    right: '-4px',
+    borderRadius: '8px',
+    color: '#fff',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: '2px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '20px',
+    height: '3px',
+    background: '#fff',
+    borderRadius: '2px',
   },
 };
 
